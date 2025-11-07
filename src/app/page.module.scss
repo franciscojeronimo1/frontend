@@ -16,6 +16,9 @@
   gap: 16px;
   width: 600px;
 
+  h1 {
+    color: var(--white);
+  }
 
   form {
     color: var(--white);
@@ -30,9 +33,39 @@
   form button {
     height: 40px;
     font-size: 16px;
+    background-color: var(--red-900);
+    border: 0;
+    border-radius: 8px;
+    color: var(--white);
+    font-weight: bold;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.5s;
   }
+  form button:hover {
+    transform: scale(1.05);
+}
+}
+.input {
+  height: 40px;
+  border: 1px solid var(--gray-100);
+  padding: 0 16px;
+  border-radius: 8px;
+  background-color: var(--dark-900);
+  color: var(--white);
+  font-size: 16px;
 }
 
+.input::placeholder {
+  color: rgab(255, 255, 255, 0.700);
+}
+
+.text {
+  color: var(--white);
+  font-size: 18px;
+  margin-bottom: 8px;
+}
 
 @media (max-width: 620px) {
   .login {
