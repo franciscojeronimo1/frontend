@@ -2,6 +2,8 @@
 import {createContext, ReactNode , useState} from 'react';
 import { api } from '@/services/api';
 import { getCookieClient } from '@/lib/cookieClient';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 interface OrderItemProps {
     id: string;
@@ -20,7 +22,7 @@ interface OrderItemProps {
     order: {
         id: string;
         table: number;
-        name: string;
+        name: string | null ;
         draft: boolean;
         status: boolean;
     }
@@ -29,8 +31,10 @@ interface OrderItemProps {
 
 type OrderContextData = {
     isOpen: boolean;
-    onRequestOpen: (order_id: string) => void;
+    onRequestOpen: (order_id: string) => Promise<void>;
     onRequestClose: () => void;
+    order: OrderItemProps[]
+    finishOrder: (prder_id : string) => Promise<void>
 }
 
 type orderProviderProps = {
@@ -42,6 +46,7 @@ export const OrderContext = createContext({} as OrderContextData);
 export function OrderProvider({children}: orderProviderProps){
     const [isOpen, setIsOpen] = useState(false);
     const [order, setOrder] = useState<OrderItemProps[]>([])
+    const router = useRouter()
 
    async function onRequestOpen(order_id: string){
 
@@ -55,15 +60,40 @@ export function OrderProvider({children}: orderProviderProps){
             order_id: order_id
         }
     })
-    console.log(response.data)
+        setOrder(response.data)
+
         setIsOpen(true);
     }
     function onRequestClose(){
         setIsOpen(false);
     }
 
+    async function finishOrder(order_id: string) {
+        const token = getCookieClient()
+
+        const data = {
+            order_id: order_id
+        }
+
+        try {
+            await api.put("/order/finish", data, {
+                headers: {
+                    Authorization: `Beader ${token}`
+                }
+            })
+        }catch(err) {
+            console.log(err)
+            toast.error("Falha ao finalizar este pedido!")
+            return;
+        }
+
+        toast.success("Pedido finalizado com sucesso!")
+        router.refresh()
+        setIsOpen(false)
+    }
+    
     return(
-        <OrderContext.Provider value={{isOpen, onRequestOpen, onRequestClose}}>
+        <OrderContext.Provider value={{isOpen, onRequestOpen, onRequestClose, finishOrder, order}}>
             {children}
         </OrderContext.Provider>
     )

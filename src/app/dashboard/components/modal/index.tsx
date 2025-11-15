@@ -5,7 +5,12 @@ import {use} from 'react'
 import { OrderContext } from '@/providers/order';
 
 export function Modalorder() {
-    const { onRequestClose} = use(OrderContext)
+    const { onRequestClose, order, finishOrder} = use(OrderContext)
+    
+    async function handleFinishOrder() {
+        await finishOrder(order[0].order.id)
+    }
+
     return(
         <dialog className={styles.dialogContainer}> 
         <section className={styles.dialogContent}>
@@ -16,14 +21,21 @@ export function Modalorder() {
             <article className={styles.container}>
                 <h2>Detalhes do pedido</h2>
 
-                <span className={styles.table}>mesa <b>36</b></span>
-
-                <section className={styles.item}>
-                    <span>1 - <b>pizza catupiry</b></span>
-                    <span className={styles.description}> pizza de frango com catupiry</span>
+                <span className={styles.table}>Mesa <b>{order[0].order.table}</b></span>
+                
+                {order[0].order?.name && (
+                    <span className={styles.table}>Nome da mesa <b>{order[0].order.name}</b></span>
+                )}
+             {order.map(item => (
+                   <section key={item.id} className={styles.item}>
+                    <span>{item.amount} - <b>{item.product.name}</b></span>
+                    <span className={styles.description}> 
+                        {item.product.description}
+                        </span>
                 </section>
 
-                <button className={styles.buttonOrder}>
+             ) )}
+                <button className={styles.buttonOrder} onClick={handleFinishOrder}>
                     Concluir pedido
                 </button>
             </article>
