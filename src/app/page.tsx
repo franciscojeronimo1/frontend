@@ -1,5 +1,4 @@
 import styles from './page.module.scss';
-import logoImg from '@/public/logo.svg';
 import  Image from 'next/image';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -52,8 +51,10 @@ export default function Page() {
     <>
   <div className={styles.containerCenter}>
       <Image 
-      src={logoImg} 
+      src="/logo.svg" 
       alt="logo da pizzaria"
+      width={190}
+      height={60}
        />
   
 
