@@ -4,10 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "start": "node dist/server.js",
-    "lint": "eslint",
-    "build": "tsc --build"
-
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
   },
   "dependencies": {
     "axios": "^1.13.2",
