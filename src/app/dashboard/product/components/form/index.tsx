@@ -86,6 +86,7 @@ export function Form( {categories}:Props ) {
             type="file"
             accept="image/png, image/jpeg"
             onChange={handleFile}
+            required={false}
           />
 
           {previewImage && (
@@ -128,7 +129,7 @@ export function Form( {categories}:Props ) {
         <textarea
           name="description"
           placeholder="Descrição do produto..."
-          required
+          required={false}
           className={styles.input}
         />
 

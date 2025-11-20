@@ -41,7 +41,7 @@ export function Orders({orders}:Props) {
                {orders.map(order => (
                  <button key={order.id} className={styles.orderItem} onClick={() => handleDetailOrder(order.id)}>
                     <div className={styles.tag}></div>
-                    <span>Mesa {order.table}</span>
+                    <span>{order.name || `Mesa ${order.table}`}</span>
 
                 </button>
                ))}

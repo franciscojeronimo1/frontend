@@ -1,0 +1,260 @@
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    h1 {
+        color: var(--white);
+        font-size: 2rem;
+    }
+}
+
+.formContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.orderInfo {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.input {
+    height: 40px;
+    border: 0;
+    background-color: var(--dark-900);
+    border-radius: 8px;
+    padding: 0 16px;
+    color: var(--white);
+    border: 1px solid var(--gray-100);
+    flex: 1;
+    min-width: 200px;
+
+    &::placeholder {
+        color: var(--gray-100);
+    }
+}
+
+.productsSection {
+    h2 {
+        color: var(--white);
+        margin-bottom: 16px;
+        font-size: 1.5rem;
+    }
+}
+
+.productsList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+}
+
+.productCard {
+    background-color: var(--dark-900);
+    border: 1px solid var(--gray-100);
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: border-color 0.2s;
+
+    &:hover {
+        border-color: var(--green-900);
+    }
+}
+
+.productInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    h3 {
+        color: var(--white);
+        font-size: 1.2rem;
+    }
+
+    .description {
+        color: var(--gray-100);
+        font-size: 0.9rem;
+    }
+
+    .price {
+        color: var(--green-900);
+        font-size: 1.1rem;
+        font-weight: bold;
+    }
+}
+
+.productActions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: auto;
+}
+
+.addButton {
+    background-color: var(--green-900);
+    color: var(--dark-900);
+    border: 0;
+    border-radius: 6px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    transition: opacity 0.2s;
+
+    &:hover {
+        opacity: 0.8;
+    }
+}
+
+.quantityControl {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background-color: var(--dark-700);
+    padding: 6px 12px;
+    border-radius: 6px;
+}
+
+.quantityButton {
+    background-color: transparent;
+    border: 0;
+    color: var(--white);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+
+    &:hover {
+        background-color: var(--dark-900);
+    }
+}
+
+.quantity {
+    color: var(--white);
+    font-weight: bold;
+    min-width: 24px;
+    text-align: center;
+}
+
+.orderSummary {
+    background-color: var(--dark-900);
+    border: 1px solid var(--gray-100);
+    border-radius: 8px;
+    padding: 20px;
+
+    h2 {
+        color: var(--white);
+        margin-bottom: 16px;
+        font-size: 1.5rem;
+    }
+}
+
+.itemsList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.orderItem {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background-color: var(--dark-700);
+    border-radius: 6px;
+}
+
+.itemInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .itemName {
+        color: var(--white);
+        font-weight: bold;
+    }
+
+    .itemPrice {
+        color: var(--gray-100);
+        font-size: 0.9rem;
+    }
+}
+
+.itemTotal {
+    color: var(--green-900);
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.removeButton {
+    background-color: transparent;
+    border: 0;
+    color: var(--red-900);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+
+    &:hover {
+        background-color: var(--dark-900);
+    }
+}
+
+.total {
+    padding-top: 16px;
+    border-top: 1px solid var(--gray-100);
+    display: flex;
+    justify-content: flex-end;
+
+    span {
+        color: var(--white);
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+}
+
+.createButton {
+    background-color: var(--green-900);
+    color: var(--dark-900);
+    border: 0;
+    border-radius: 8px;
+    padding: 16px 32px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: opacity 0.2s;
+
+    &:hover:not(:disabled) {
+        opacity: 0.8;
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}
+
+.emptyMessage {
+    color: var(--gray-100);
+    text-align: center;
+    padding: 40px;
+    grid-column: 1 / -1;
+}
+
