@@ -5,6 +5,7 @@ import {use} from 'react'
 import { OrderContext } from '@/providers/order';
 import { calculateTotalOrder } from '@/lib/helper';
 
+
 export function Modalorder() {
     const { onRequestClose, order, finishOrder} = use(OrderContext)
     
@@ -29,6 +30,9 @@ export function Modalorder() {
                 )}
              {order.map(item => (
                    <section key={item.id} className={styles.item}>
+                    
+                      
+
                     <span>Qtd: {item.amount} - <b>{item.product.name}</b> - R$ {parseFloat(item.product.price) *
                     item.amount
                     }</span>
