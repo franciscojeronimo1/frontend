@@ -78,7 +78,7 @@ export function OrderProvider({children}: orderProviderProps){
         try {
             await api.put("/order/finish", data, {
                 headers: {
-                    Authorization: `Beader ${token}`
+                    Authorization: `Bearer ${token}`
                 }
             })
         }catch(err) {
