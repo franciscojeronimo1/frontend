@@ -1,0 +1,144 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.modal {
+    background: var(--dark-900);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 500px;
+    position: relative;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.3s ease-out;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.closeButton {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: transparent;
+    border: none;
+    color: var(--gray-100);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--white);
+    }
+}
+
+.content {
+    padding: 2rem;
+    padding-top: 2.5rem;
+}
+
+.title {
+    color: var(--white);
+    font-size: 1.5rem;
+    margin: 0 0 1rem 0;
+    font-weight: 600;
+}
+
+.message {
+    color: var(--gray-100);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+    white-space: pre-line;
+}
+
+.actions {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    justify-content: flex-end;
+}
+
+.button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 100px;
+}
+
+.cancelButton {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--white);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.15);
+    }
+}
+
+.danger {
+    background: #ff3f4b;
+    color: var(--white);
+
+    &:hover {
+        background: #e63946;
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+.primary {
+    background: #3fffa3;
+    color: #1a1a1a;
+
+    &:hover {
+        background: #2ecc71;
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+

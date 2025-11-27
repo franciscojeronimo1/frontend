@@ -11,14 +11,23 @@ export interface OrderItemProps {
     created_at: string;
     order_id: string;
     product_id: string;
+    size_id: string | null;
+    price: number; // Preço histórico (no momento da venda)
     product: {
         id: string;
         name: string;
-        price: string;
+        price: string | null; // null se tem tamanhos
         description: string;
         banner: string;
         category_id: string;
+        has_sizes?: boolean;
     };
+    size: {
+        id: string;
+        name: string;
+        display: string;
+        order: number;
+    } | null;
     order: {
         id: string;
         table: number;

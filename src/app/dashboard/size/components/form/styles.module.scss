@@ -1,0 +1,153 @@
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.container h1 {
+    color: #fff;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+}
+
+.info {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+.info p {
+    color: #fff;
+    margin: 0;
+}
+
+.createAllContainer {
+    margin-bottom: 2rem;
+}
+
+.createAllButton {
+    width: 100%;
+    padding: 1rem;
+    background: #3fffa3;
+    color: #1a1a1a;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &:hover:not(:disabled) {
+        background: #2ecc71;
+        transform: translateY(-2px);
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+}
+
+.sizesList {
+    margin-bottom: 2rem;
+}
+
+.sizesList h2 {
+    color: #fff;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.emptyMessage {
+    display: block;
+    color: #999;
+    text-align: center;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+.sizesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.sizeCard {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    position: relative;
+}
+
+.sizeCardContent {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.deleteButton {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(255, 59, 75, 0.2);
+    border: 1px solid rgba(255, 59, 75, 0.5);
+    border-radius: 4px;
+    padding: 4px;
+    cursor: pointer;
+    color: #ff3f4b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+
+    &:hover {
+        background: rgba(255, 59, 75, 0.3);
+        border-color: #ff3f4b;
+        transform: scale(1.1);
+    }
+}
+
+.sizeName {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #3fffa3;
+}
+
+.sizeDisplay {
+    color: #fff;
+    font-size: 1rem;
+}
+
+.sizeOrder {
+    color: #999;
+    font-size: 0.875rem;
+}
+
+.actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.backButton {
+    padding: 0.75rem 2rem;
+    background: transparent;
+    color: #fff;
+    border: 2px solid #3fffa3;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &:hover {
+        background: #3fffa3;
+        color: #1a1a1a;
+    }
+}
+

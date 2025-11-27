@@ -81,3 +81,129 @@
     padding: 0 8px;
     color: var(--white);
 }
+
+.sizesSection {
+    margin-top: 16px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+.checkboxContainer {
+    margin-bottom: 16px;
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--white);
+    cursor: pointer;
+}
+
+.checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.customPricesSection {
+    margin-top: 16px;
+}
+
+.customPricesSection h3 {
+    color: var(--white);
+    margin-bottom: 8px;
+    font-size: 1rem;
+}
+
+.infoText {
+    color: var(--gray-100);
+    font-size: 0.875rem;
+    margin-bottom: 16px;
+}
+
+.sizePricesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.sizePriceInput {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sizePriceInput label {
+    color: var(--white);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.priceInputWrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--dark-900);
+    border: 1px solid var(--gray-100);
+    border-radius: 8px;
+    padding: 0 12px;
+}
+
+.currency {
+    color: var(--white);
+    font-weight: 500;
+}
+
+.priceInput {
+    flex: 1;
+    height: 40px;
+    border: 0;
+    background: transparent;
+    color: var(--white);
+    font-size: 1rem;
+    
+    &::placeholder {
+        color: var(--gray-100);
+    }
+}
+
+.infoBox {
+    padding: 16px;
+    background: rgba(63, 255, 163, 0.1);
+    border: 1px solid rgba(63, 255, 163, 0.3);
+    border-radius: 8px;
+    margin-top: 16px;
+}
+
+.infoBox p {
+    color: #3fffa3;
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+.priceSection {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.priceSection label {
+    color: var(--white);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.warning {
+    padding: 16px;
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    border-radius: 8px;
+}
+
+.warning p {
+    color: #ffc107;
+    margin: 0;
+    font-size: 0.875rem;
+}

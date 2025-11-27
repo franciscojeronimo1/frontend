@@ -1,9 +1,9 @@
 import { api } from "@/services/api"
 import { getCookieServer } from "@/lib/cookieServer"
-import { CreateOrderForm } from "./components/form"
+import { ProductsList } from "./components/list"
 import { Product } from "@/lib/types"
 
-async function getProducts(): Promise<Product[]> {
+async function getAllProducts(): Promise<Product[]> {
     try {
         const token = await getCookieServer();
         
@@ -16,8 +16,6 @@ async function getProducts(): Promise<Product[]> {
         
         const categories = categoriesResponse.data || [];
         
-        console.log("📥 [GET PRODUCTS] Categorias encontradas:", categories.length);
-        
         if (categories.length === 0) {
             return [];
         }
@@ -27,8 +25,6 @@ async function getProducts(): Promise<Product[]> {
         
         for (const category of categories) {
             try {
-                
-                // Tentar enviar category_id como query string na URL
                 const productsResponse = await api.get(`/category/product?category_id=${category.id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -36,20 +32,10 @@ async function getProducts(): Promise<Product[]> {
                 });
                 
                 const products = productsResponse.data || [];
-                
-               
-                products.forEach((prod: Product) => {
-                    console.log(`  - ${prod.name}: has_sizes=${prod.has_sizes}, prices=${prod.prices?.length || 0} preços, price=${prod.price || 'null'}`);
-                    if (prod.has_sizes && prod.prices) {
-                        console.log(`    Preços disponíveis:`, prod.prices.map(p => `${p.size.display} (${p.size.name}): R$ ${p.price}`));
-                    }
-                });
-                
                 allProducts.push(...products);
-            } catch (error: unknown) {
-               
-                
-            
+            } catch (error) {
+                // Ignorar erros de categorias sem produtos
+                console.error(`Error fetching products for category ${category.id}:`, error);
             }
         }
         
@@ -60,11 +46,11 @@ async function getProducts(): Promise<Product[]> {
     }
 }
 
-export default async function CreateOrder() {
-    const products = await getProducts();
+export default async function ProductsPage() {
+    const products = await getAllProducts();
 
     return (
-        <CreateOrderForm products={products} />
+        <ProductsList products={products} />
     )
 }
 

@@ -119,11 +119,15 @@ export function Modalorder() {
         const total = calculateTotalOrder(order).toFixed(2);
         
         const itemsHtml = order.map(item => {
-            const itemTotal = (parseFloat(item.product.price) * item.amount).toFixed(2);
+            const itemTotal = (item.price * item.amount).toFixed(2);
+            const productName = item.size 
+                ? `${item.product.name} - ${item.size.display}`
+                : item.product.name;
+            
             return `
                 <div class="item">
                     <div class="item-line">
-                        <span class="item-name">${item.amount}x ${item.product.name}</span>
+                        <span class="item-name">${item.amount}x ${productName}</span>
                         <span>R$ ${itemTotal}</span>
                     </div>
                     ${item.product.description ? `<div class="item-details">${item.product.description}</div>` : ''}
@@ -165,20 +169,21 @@ export function Modalorder() {
                 ) : (
                     <span className={styles.table}>Mesa <b>{order[0].order.table}</b></span>
                 )}
-             {order.map(item => (
-                   <section key={item.id} className={styles.item}>
-                    
-                      
-
-                    <span>Qtd: {item.amount} - <b>{item.product.name}</b> - R$ {parseFloat(item.product.price) *
-                    item.amount
-                    }</span>
-                    <span className={styles.description}> 
-                        {item.product.description}
+             {order.map(item => {
+                const productName = item.size 
+                    ? `${item.product.name} - ${item.size.display}`
+                    : item.product.name;
+                const itemTotal = item.price * item.amount;
+                
+                return (
+                    <section key={item.id} className={styles.item}>
+                        <span>Qtd: {item.amount} - <b>{productName}</b> - R$ {itemTotal.toFixed(2)}</span>
+                        <span className={styles.description}> 
+                            {item.product.description}
                         </span>
-                </section>
-
-             ) )}
+                    </section>
+                );
+             })}
 
              <h3 className={styles.total}>Valor total: R$ {calculateTotalOrder(order)}</h3>
                 <div className={styles.buttonsContainer}>

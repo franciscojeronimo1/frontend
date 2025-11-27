@@ -27,3 +27,200 @@
     color: var(--white);
     border: 1px solid var(--gray-100);
 }
+
+.checkboxContainer {
+    margin: 16px 0;
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--white);
+    cursor: pointer;
+}
+
+.checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.sizesSection {
+    margin-top: 24px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+.sizesSection h3 {
+    color: var(--white);
+    margin-bottom: 8px;
+}
+
+.infoText {
+    color: var(--gray-100);
+    font-size: 0.875rem;
+    margin-bottom: 16px;
+}
+
+.sizePricesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.sizePriceInput {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sizePriceInput label {
+    color: var(--white);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.priceInputWrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--dark-900);
+    border: 1px solid var(--gray-100);
+    border-radius: 8px;
+    padding: 0 12px;
+}
+
+.currency {
+    color: var(--white);
+    font-weight: 500;
+}
+
+.priceInput {
+    flex: 1;
+    height: 40px;
+    border: 0;
+    background: transparent;
+    color: var(--white);
+    font-size: 1rem;
+    
+    &::placeholder {
+        color: var(--gray-100);
+    }
+}
+
+.warning {
+    padding: 16px;
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    border-radius: 8px;
+    margin-top: 16px;
+}
+
+.warning p {
+    color: #ffc107;
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+.categoriesList {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.categoriesList h2 {
+    color: var(--white);
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.emptyMessage {
+    display: block;
+    color: #999;
+    text-align: center;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+.categoriesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.categoryCard {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    border-radius: 8px;
+    position: relative;
+    transition: all 0.2s;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.15);
+    }
+}
+
+.categoryCardContent {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.categoryCardContent h3 {
+    color: var(--white);
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.categoryInfo {
+    color: #3fffa3;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.categoryPrices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.priceTag {
+    background: rgba(63, 255, 163, 0.1);
+    border: 1px solid rgba(63, 255, 163, 0.3);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    color: #3fffa3;
+}
+
+.morePrices {
+    color: #999;
+    font-size: 0.75rem;
+    padding: 4px 8px;
+}
+
+.deleteButton {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(255, 59, 75, 0.2);
+    border: 1px solid rgba(255, 59, 75, 0.5);
+    border-radius: 4px;
+    padding: 6px;
+    cursor: pointer;
+    color: #ff3f4b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+
+    &:hover {
+        background: rgba(255, 59, 75, 0.3);
+        border-color: #ff3f4b;
+        transform: scale(1.1);
+    }
+}

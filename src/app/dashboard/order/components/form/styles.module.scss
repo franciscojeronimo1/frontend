@@ -258,3 +258,77 @@
     grid-column: 1 / -1;
 }
 
+.sizesContainer {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.sizeLabel {
+    color: var(--white);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.sizesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 8px;
+}
+
+.sizeButton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px;
+    background-color: var(--dark-700);
+    border: 2px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+        border-color: var(--green-900);
+        background-color: var(--dark-900);
+    }
+}
+
+.sizeButtonActive {
+    border-color: var(--green-900);
+    background-color: rgba(63, 255, 163, 0.1);
+}
+
+.sizeName {
+    color: var(--white);
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.sizeDisplay {
+    color: var(--gray-100);
+    font-size: 0.75rem;
+}
+
+.sizePrice {
+    color: var(--green-900);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.selectedPrice {
+    color: var(--green-900);
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    padding: 8px;
+    background-color: rgba(63, 255, 163, 0.1);
+    border-radius: 6px;
+}
+
+.addButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
