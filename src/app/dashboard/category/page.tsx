@@ -38,7 +38,7 @@ async function getCategories(): Promise<Category[]> {
     }
 }
 
-export default async function Category() {
+export default async function CategoryPage() {
     const [sizes, categories] = await Promise.all([
         getSizes(),
         getCategories()
