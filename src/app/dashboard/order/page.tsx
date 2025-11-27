@@ -3,6 +3,8 @@ import { getCookieServer } from "@/lib/cookieServer"
 import { CreateOrderForm } from "./components/form"
 import { Product } from "@/lib/types"
 
+export const dynamic = 'force-dynamic';
+
 async function getProducts(): Promise<Product[]> {
     try {
         const token = await getCookieServer();

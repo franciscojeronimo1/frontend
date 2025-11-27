@@ -3,6 +3,8 @@ import { getCookieServer } from "@/lib/cookieServer"
 import { SizeForm } from "./components/form"
 import { Size } from "@/lib/types"
 
+export const dynamic = 'force-dynamic';
+
 async function getSizes(): Promise<Size[]> {
     try {
         const token = await getCookieServer();

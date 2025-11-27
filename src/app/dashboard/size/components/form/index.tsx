@@ -1,7 +1,6 @@
 "use client";
 import styles from "./styles.module.scss";
-import { useState, useEffect } from "react";
-import { Button } from "@/app/dashboard/components/button";
+import { useState} from "react";
 import { api } from "@/services/api";
 import { getCookieClient } from '@/lib/cookieClient';
 import { toast } from "sonner";
@@ -110,7 +109,9 @@ export function SizeForm({ sizes }: Props) {
         }
     }
 
-    function handleOpenDeleteModal(sizeId: string, sizeName: string) {
+   
+
+    function handleDeleteSize(sizeId: string, sizeName: string) {
         setDeleteModal({
             isOpen: true,
             sizeId,
