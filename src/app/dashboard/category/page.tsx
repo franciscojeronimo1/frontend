@@ -1,7 +1,8 @@
 import { api } from "@/services/api"
 import { getCookieServer } from "@/lib/cookieServer"
 import { CategoryForm } from "./components/form"
-import { Size, Category } from "@/lib/types"
+import { Size } from "@/lib/types"
+import type { Category } from "@/lib/types"
 
 async function getSizes(): Promise<Size[]> {
     try {
