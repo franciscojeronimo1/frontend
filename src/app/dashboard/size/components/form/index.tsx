@@ -101,7 +101,7 @@ export function SizeForm({ sizes }: Props) {
                 }
             });
             setExistingSizes(response.data || []);
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Error creating sizes:", error);
             toast.error("Falha ao criar tamanhos!");
         } finally {

@@ -279,6 +279,15 @@ export function CreateOrderForm({ products }: Props) {
                     />
                 </section>
 
+                <button
+                    type="button"
+                    onClick={handleCreateOrder}
+                    disabled={isCreating || orderItems.length === 0 || !name.trim()}
+                    className={styles.createButton}
+                >
+                    {isCreating ? "Criando pedido..." : "Criar Pedido"}
+                </button>
+
                 <section className={styles.productsSection}>
                     <h2>Selecione os produtos</h2>
                     <div className={styles.productsList}>
@@ -402,15 +411,6 @@ export function CreateOrderForm({ products }: Props) {
                         </div>
                     </section>
                 )}
-
-                <button
-                    type="button"
-                    onClick={handleCreateOrder}
-                    disabled={isCreating || orderItems.length === 0 || !name.trim()}
-                    className={styles.createButton}
-                >
-                    {isCreating ? "Criando pedido..." : "Criar Pedido"}
-                </button>
             </div>
         </main>
     );
