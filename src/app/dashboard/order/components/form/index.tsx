@@ -1,13 +1,13 @@
 "use client";
 import styles from "./styles.module.scss";
-import { useState, useEffect } from "react";
-import { Button } from "@/app/dashboard/components/button";
+import { useState, useMemo } from "react";
 import { api } from "@/services/api";
 import { getCookieClient } from '@/lib/cookieClient';
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { X, Plus, Minus } from "lucide-react";
-import { Product, ProductPrice } from "@/lib/types";
+import { Product, Category } from "@/lib/types";
+import { Select, SelectOption } from "@/app/dashboard/components/select";
 
 interface OrderItem {
     product_id: string;
@@ -19,14 +19,30 @@ interface OrderItem {
 
 interface Props {
     products: Product[];
+    categories: Category[];
 }
 
-export function CreateOrderForm({ products }: Props) {
+export function CreateOrderForm({ products, categories }: Props) {
     const router = useRouter();
     const [name, setName] = useState("");
     const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
     const [isCreating, setIsCreating] = useState(false);
     const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({}); // product_id -> size_id
+    const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+
+    const filteredProducts = useMemo(() => {
+        if (!selectedCategoryId) {
+            return products;
+        }
+        return products.filter(product => product.category_id === selectedCategoryId);
+    }, [products, selectedCategoryId]);
+
+    const categoryOptions: SelectOption[] = useMemo(() => {
+        return categories.map(category => ({
+            value: category.id,
+            label: category.name
+        }));
+    }, [categories]);
 
     function getProductPrice(product: Product, sizeId?: string): number | null {
         if (!product.has_sizes) {
@@ -196,20 +212,11 @@ export function CreateOrderForm({ products }: Props) {
                     payload.size_id = item.size_id;
                 }
 
-                // LOG: Verificar payload antes de enviar
-                console.log("🟡 [PEDIDO] Adicionando item ao pedido:");
-                console.log("  - Produto:", item.product.name);
-                console.log("  - Produto tem tamanhos:", item.product.has_sizes);
-                console.log("  - Size ID:", item.size_id || "null/undefined");
-                console.log("  - Payload completo:", JSON.stringify(payload, null, 2));
-
                 await api.post("/order/add", payload, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 });
-                
-                console.log("✅ [PEDIDO] Item adicionado com sucesso!");
             }
 
             // 3. Enviar o pedido (muda draft para false e aparece na lista)
@@ -225,9 +232,10 @@ export function CreateOrderForm({ products }: Props) {
             router.push("/dashboard");
             router.refresh();
 
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Error creating order:", error);
-            const errorMessage = error.response?.data?.error || "Falha ao criar o pedido!";
+            const axiosError = error as { response?: { data?: { error?: string } } };
+            const errorMessage = axiosError.response?.data?.error || "Falha ao criar o pedido!";
             toast.error(errorMessage);
         } finally {
             setIsCreating(false);
@@ -249,19 +257,6 @@ export function CreateOrderForm({ products }: Props) {
 
         return "Selecione um tamanho";
     }
-
-    // LOG: Verificar produtos quando são renderizados
-    useEffect(() => {
-        if (products.length > 0) {
-            console.log("📥 [PEDIDO] Produtos carregados:", products.length);
-            products.forEach(prod => {
-                console.log(`  - ${prod.name}: has_sizes=${prod.has_sizes}, prices=${prod.prices?.length || 0}, price=${prod.price}`);
-                if (prod.has_sizes && prod.prices) {
-                    console.log(`    Preços disponíveis:`, prod.prices.map(p => `${p.size.display} (${p.size.name}): R$ ${p.price}`));
-                }
-            });
-        }
-    }, [products]);
 
     return (
         <main className={styles.container}>
@@ -289,14 +284,27 @@ export function CreateOrderForm({ products }: Props) {
                 </button>
 
                 <section className={styles.productsSection}>
-                    <h2>Selecione os produtos</h2>
+                    <div className={styles.productsHeader}>
+                        <h2>Selecione os produtos</h2>
+                        <Select
+                            options={categoryOptions}
+                            value={selectedCategoryId}
+                            onChange={setSelectedCategoryId}
+                            placeholder="Todas as categorias"
+                            className={styles.categorySelect}
+                        />
+                    </div>
                     <div className={styles.productsList}>
-                        {products.length === 0 ? (
+                        {filteredProducts.length === 0 ? (
                             <span className={styles.emptyMessage}>
-                                Nenhum produto cadastrado. Cadastre produtos primeiro.
+                                {selectedCategoryId 
+                                    ? "Nenhum produto encontrado nesta categoria." 
+                                    : products.length === 0 
+                                        ? "Nenhum produto cadastrado. Cadastre produtos primeiro."
+                                        : "Nenhum produto encontrado."}
                             </span>
                         ) : (
-                            products.map(product => {
+                            filteredProducts.map(product => {
                                 const hasSizes = product.has_sizes;
                                 const selectedSizeId = selectedSizes[product.id];
                                 const itemAmount = hasSizes && selectedSizeId

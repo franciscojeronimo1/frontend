@@ -48,6 +48,26 @@
     }
 }
 
+.productsHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+
+    h2 {
+        margin-bottom: 0;
+        flex: 1;
+        min-width: 200px;
+    }
+}
+
+.categorySelect {
+    min-width: 200px;
+    max-width: 300px;
+}
+
 .productsList {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
