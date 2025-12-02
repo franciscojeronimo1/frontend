@@ -12,6 +12,8 @@ export interface OrderItemProps {
     order_id: string;
     product_id: string;
     size_id: string | null;
+    product_id_2?: string | null; // Segundo sabor (meia a meia)
+    size_id_2?: string | null; // Tamanho do segundo sabor
     price: number; // Preço histórico (no momento da venda)
     product: {
         id: string;
@@ -22,12 +24,27 @@ export interface OrderItemProps {
         category_id: string;
         has_sizes?: boolean;
     };
+    product_2?: {
+        id: string;
+        name: string;
+        price: string | null;
+        description: string;
+        banner: string;
+        category_id: string;
+        has_sizes?: boolean;
+    } | null; // Segundo produto (quando meia a meia)
     size: {
         id: string;
         name: string;
         display: string;
         order: number;
     } | null;
+    size_2?: {
+        id: string;
+        name: string;
+        display: string;
+        order: number;
+    } | null; // Segundo tamanho (quando meia a meia)
     order: {
         id: string;
         table: number;

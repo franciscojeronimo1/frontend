@@ -14,7 +14,10 @@ interface OrderItem {
     product: Product;
     amount: number;
     size_id: string | null; // Obrigatório se produto tem tamanhos
-    selectedPrice: number; // Preço selecionado
+    selectedPrice: number; // Preço selecionado (maior entre os dois se meia a meia)
+    product_id_2?: string | null; // Segundo sabor (meia a meia)
+    product_2?: Product | null; // Segundo produto
+    size_id_2?: string | null; // Tamanho do segundo sabor (deve ser igual ao primeiro)
 }
 
 interface Props {
@@ -29,6 +32,8 @@ export function CreateOrderForm({ products, categories }: Props) {
     const [isCreating, setIsCreating] = useState(false);
     const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({}); // product_id -> size_id
     const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+    const [halfHalfMode, setHalfHalfMode] = useState<Record<string, boolean>>({}); // product_id -> isHalfHalf
+    const [selectedSecondFlavor, setSelectedSecondFlavor] = useState<Record<string, string>>({}); // product_id -> second_product_id
 
     const filteredProducts = useMemo(() => {
         if (!selectedCategoryId) {
@@ -61,9 +66,55 @@ export function CreateOrderForm({ products, categories }: Props) {
             ...selectedSizes,
             [productId]: sizeId
         });
+        // Se estiver em modo meia a meia, limpar seleção do segundo sabor quando mudar tamanho
+        if (halfHalfMode[productId]) {
+            setSelectedSecondFlavor({
+                ...selectedSecondFlavor,
+                [productId]: ""
+            });
+        }
+    }
+
+    function toggleHalfHalf(productId: string) {
+        const newHalfHalfMode = !halfHalfMode[productId];
+        setHalfHalfMode({
+            ...halfHalfMode,
+            [productId]: newHalfHalfMode
+        });
+        
+        // Se desativar meia a meia, limpar seleção do segundo sabor
+        if (!newHalfHalfMode) {
+            setSelectedSecondFlavor({
+                ...selectedSecondFlavor,
+                [productId]: ""
+            });
+        }
+    }
+
+    function handleSelectSecondFlavor(productId: string, secondProductId: string) {
+        setSelectedSecondFlavor({
+            ...selectedSecondFlavor,
+            [productId]: secondProductId
+        });
     }
 
     function handleAddItem(product: Product) {
+        const isHalfHalf = halfHalfMode[product.id];
+        const secondProductId = selectedSecondFlavor[product.id];
+
+        // Se está em modo meia a meia, validar segundo sabor
+        if (isHalfHalf) {
+            if (!secondProductId || secondProductId === "") {
+                toast.warning("Selecione o segundo sabor para pizza meia a meia!");
+                return;
+            }
+
+            if (secondProductId === product.id) {
+                toast.warning("O segundo sabor deve ser diferente do primeiro!");
+                return;
+            }
+        }
+
         // Se produto tem tamanhos, validar que tamanho foi selecionado
         if (product.has_sizes) {
             const selectedSizeId = selectedSizes[product.id];
@@ -78,13 +129,55 @@ export function CreateOrderForm({ products, categories }: Props) {
                 return;
             }
 
-            const existingItem = orderItems.find(
-                item => item.product_id === product.id && item.size_id === selectedSizeId
-            );
+            let finalPrice = price;
+            let secondProduct: Product | null = null;
+            let secondSizeId: string | null = null;
+
+            // Se é meia a meia, buscar segundo produto e calcular preço
+            if (isHalfHalf && secondProductId) {
+                secondProduct = products.find(p => p.id === secondProductId) || null;
+                if (!secondProduct) {
+                    toast.error("Segundo produto não encontrado!");
+                    return;
+                }
+
+                // Validar que o segundo produto também tem tamanhos (se o primeiro tem)
+                if (secondProduct.has_sizes) {
+                    secondSizeId = selectedSizeId; // Mesmo tamanho do primeiro
+                    const secondPrice = getProductPrice(secondProduct, secondSizeId);
+                    if (secondPrice === null) {
+                        toast.error("Erro ao obter preço do segundo produto!");
+                        return;
+                    }
+                    // Usar o maior preço entre os dois (Opção B)
+                    finalPrice = Math.max(price, secondPrice);
+                } else {
+                    toast.warning("O segundo produto deve ter tamanhos para pizza meia a meia!");
+                    return;
+                }
+            }
+
+            const existingItem = orderItems.find(item => {
+                if (isHalfHalf && secondProductId) {
+                    return item.product_id === product.id && 
+                           item.size_id === selectedSizeId &&
+                           item.product_id_2 === secondProductId;
+                } else {
+                    return item.product_id === product.id && 
+                           item.size_id === selectedSizeId &&
+                           !item.product_id_2;
+                }
+            });
 
             if (existingItem) {
                 setOrderItems(orderItems.map(item =>
-                    item.product_id === product.id && item.size_id === selectedSizeId
+                    (isHalfHalf && secondProductId
+                        ? item.product_id === product.id && 
+                          item.size_id === selectedSizeId &&
+                          item.product_id_2 === secondProductId
+                        : item.product_id === product.id && 
+                          item.size_id === selectedSizeId &&
+                          !item.product_id_2)
                         ? { ...item, amount: item.amount + 1 }
                         : item
                 ));
@@ -94,11 +187,19 @@ export function CreateOrderForm({ products, categories }: Props) {
                     product,
                     amount: 1,
                     size_id: selectedSizeId,
-                    selectedPrice: price
+                    selectedPrice: finalPrice,
+                    product_id_2: isHalfHalf && secondProductId ? secondProductId : null,
+                    product_2: isHalfHalf && secondProduct ? secondProduct : null,
+                    size_id_2: isHalfHalf && secondSizeId ? secondSizeId : null
                 }]);
             }
         } else {
-            // Produto sem tamanhos
+            // Produto sem tamanhos - não suporta meia a meia
+            if (isHalfHalf) {
+                toast.warning("Pizza meia a meia só está disponível para produtos com tamanhos!");
+                return;
+            }
+
             const price = product.price;
             if (!price) {
                 toast.error("Produto sem preço definido!");
@@ -106,12 +207,12 @@ export function CreateOrderForm({ products, categories }: Props) {
             }
 
             const existingItem = orderItems.find(
-                item => item.product_id === product.id && item.size_id === null
+                item => item.product_id === product.id && item.size_id === null && !item.product_id_2
             );
 
             if (existingItem) {
                 setOrderItems(orderItems.map(item =>
-                    item.product_id === product.id && item.size_id === null
+                    item.product_id === product.id && item.size_id === null && !item.product_id_2
                         ? { ...item, amount: item.amount + 1 }
                         : item
                 ));
@@ -127,28 +228,62 @@ export function CreateOrderForm({ products, categories }: Props) {
         }
     }
 
-    function handleRemoveItem(productId: string, sizeId: string | null) {
-        const existingItem = orderItems.find(
-            item => item.product_id === productId && item.size_id === sizeId
-        );
+    function handleRemoveItem(productId: string, sizeId: string | null, productId2?: string | null) {
+        const existingItem = orderItems.find(item => {
+            if (productId2) {
+                return item.product_id === productId && 
+                       item.size_id === sizeId &&
+                       item.product_id_2 === productId2;
+            } else {
+                return item.product_id === productId && 
+                       item.size_id === sizeId &&
+                       !item.product_id_2;
+            }
+        });
 
         if (existingItem && existingItem.amount > 1) {
-            setOrderItems(orderItems.map(item =>
-                item.product_id === productId && item.size_id === sizeId
-                    ? { ...item, amount: item.amount - 1 }
-                    : item
-            ));
+            setOrderItems(orderItems.map(item => {
+                if (productId2) {
+                    return item.product_id === productId && 
+                           item.size_id === sizeId &&
+                           item.product_id_2 === productId2
+                        ? { ...item, amount: item.amount - 1 }
+                        : item;
+                } else {
+                    return item.product_id === productId && 
+                           item.size_id === sizeId &&
+                           !item.product_id_2
+                        ? { ...item, amount: item.amount - 1 }
+                        : item;
+                }
+            }));
         } else {
-            setOrderItems(orderItems.filter(
-                item => !(item.product_id === productId && item.size_id === sizeId)
-            ));
+            setOrderItems(orderItems.filter(item => {
+                if (productId2) {
+                    return !(item.product_id === productId && 
+                            item.size_id === sizeId &&
+                            item.product_id_2 === productId2);
+                } else {
+                    return !(item.product_id === productId && 
+                            item.size_id === sizeId &&
+                            !item.product_id_2);
+                }
+            }));
         }
     }
 
-    function getItemAmount(productId: string, sizeId: string | null): number {
-        const item = orderItems.find(
-            item => item.product_id === productId && item.size_id === sizeId
-        );
+    function getItemAmount(productId: string, sizeId: string | null, productId2?: string | null): number {
+        const item = orderItems.find(item => {
+            if (productId2) {
+                return item.product_id === productId && 
+                       item.size_id === sizeId &&
+                       item.product_id_2 === productId2;
+            } else {
+                return item.product_id === productId && 
+                       item.size_id === sizeId &&
+                       !item.product_id_2;
+            }
+        });
         return item ? item.amount : 0;
     }
 
@@ -178,6 +313,15 @@ export function CreateOrderForm({ products, categories }: Props) {
             return;
         }
 
+        // Validar que itens meia a meia têm segundo sabor selecionado
+        const invalidHalfHalf = orderItems.filter(
+            item => item.product_id_2 && !item.product_2
+        );
+        if (invalidHalfHalf.length > 0) {
+            toast.warning("Alguns itens meia a meia não têm segundo sabor selecionado!");
+            return;
+        }
+
         setIsCreating(true);
         const token = getCookieClient();
 
@@ -201,6 +345,8 @@ export function CreateOrderForm({ products, categories }: Props) {
                     product_id: string;
                     amount: number;
                     size_id?: string;
+                    product_id_2?: string | null;
+                    size_id_2?: string | null;
                 } = {
                     order_id: orderId,
                     product_id: item.product_id,
@@ -210,6 +356,14 @@ export function CreateOrderForm({ products, categories }: Props) {
                 // Adicionar size_id apenas se produto tem tamanhos
                 if (item.product.has_sizes && item.size_id) {
                     payload.size_id = item.size_id;
+                }
+
+                // Adicionar segundo sabor se for meia a meia
+                if (item.product_id_2) {
+                    payload.product_id_2 = item.product_id_2;
+                    if (item.size_id_2) {
+                        payload.size_id_2 = item.size_id_2;
+                    }
                 }
 
                 await api.post("/order/add", payload, {
@@ -242,7 +396,7 @@ export function CreateOrderForm({ products, categories }: Props) {
         }
     }
 
-    function renderProductPrice(product: Product): string {
+    function renderProductPrice(product: Product, isHalfHalf: boolean = false, secondProduct?: Product): string {
         if (!product.has_sizes) {
             return product.price ? `R$ ${product.price.toFixed(2)}` : "Preço não definido";
         }
@@ -251,11 +405,26 @@ export function CreateOrderForm({ products, categories }: Props) {
         if (selectedSizeId) {
             const price = getProductPrice(product, selectedSizeId);
             if (price !== null) {
+                if (isHalfHalf && secondProduct) {
+                    const secondPrice = getProductPrice(secondProduct, selectedSizeId);
+                    if (secondPrice !== null) {
+                        const finalPrice = Math.max(price, secondPrice);
+                        return `R$ ${finalPrice.toFixed(2)} (meia a meia)`;
+                    }
+                }
                 return `R$ ${price.toFixed(2)}`;
             }
         }
 
         return "Selecione um tamanho";
+    }
+
+    // Obter produtos disponíveis para segundo sabor (excluindo o produto atual)
+    function getAvailableSecondFlavors(currentProductId: string): Product[] {
+        return filteredProducts.filter(p => 
+            p.id !== currentProductId && 
+            p.has_sizes // Apenas produtos com tamanhos podem ser segundo sabor
+        );
     }
 
     return (
@@ -307,9 +476,29 @@ export function CreateOrderForm({ products, categories }: Props) {
                             filteredProducts.map(product => {
                                 const hasSizes = product.has_sizes;
                                 const selectedSizeId = selectedSizes[product.id];
-                                const itemAmount = hasSizes && selectedSizeId
-                                    ? getItemAmount(product.id, selectedSizeId)
-                                    : getItemAmount(product.id, null);
+                                const isHalfHalf = halfHalfMode[product.id] || false;
+                                const selectedSecondProductId = selectedSecondFlavor[product.id] || "";
+                                const selectedSecondProduct = selectedSecondProductId 
+                                    ? products.find(p => p.id === selectedSecondProductId)
+                                    : null;
+                                
+                                // Calcular quantidade considerando meia a meia
+                                let itemAmount = 0;
+                                if (hasSizes && selectedSizeId) {
+                                    if (isHalfHalf && selectedSecondProductId) {
+                                        itemAmount = getItemAmount(product.id, selectedSizeId, selectedSecondProductId);
+                                    } else {
+                                        itemAmount = getItemAmount(product.id, selectedSizeId);
+                                    }
+                                } else {
+                                    itemAmount = getItemAmount(product.id, null);
+                                }
+
+                                const availableSecondFlavors = getAvailableSecondFlavors(product.id);
+                                const secondFlavorOptions: SelectOption[] = availableSecondFlavors.map(p => ({
+                                    value: p.id,
+                                    label: p.name
+                                }));
 
                                 return (
                                     <div key={product.id} className={styles.productCard}>
@@ -337,8 +526,38 @@ export function CreateOrderForm({ products, categories }: Props) {
                                                         ))}
                                                     </div>
                                                     <div className={styles.selectedPrice}>
-                                                        {selectedSizeId ? renderProductPrice(product) : "Selecione um tamanho"}
+                                                        {selectedSizeId 
+                                                            ? renderProductPrice(product, isHalfHalf, selectedSecondProduct || undefined)
+                                                            : "Selecione um tamanho"}
                                                     </div>
+                                                    
+                                                    {selectedSizeId && (
+                                                        <div className={styles.halfHalfContainer}>
+                                                            <label className={styles.halfHalfCheckbox}>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={isHalfHalf}
+                                                                    onChange={() => toggleHalfHalf(product.id)}
+                                                                />
+                                                                <span>Pizza Meia a Meia</span>
+                                                            </label>
+                                                            
+                                                            {isHalfHalf && (
+                                                                <div className={styles.secondFlavorContainer}>
+                                                                    <label className={styles.secondFlavorLabel}>
+                                                                        Selecione o segundo sabor:
+                                                                    </label>
+                                                                    <Select
+                                                                        options={secondFlavorOptions}
+                                                                        value={selectedSecondProductId}
+                                                                        onChange={(value) => handleSelectSecondFlavor(product.id, value)}
+                                                                        placeholder="Escolha o segundo sabor"
+                                                                        className={styles.secondFlavorSelect}
+                                                                    />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    )}
                                                 </div>
                                             ) : (
                                                 <span className={styles.price}>{renderProductPrice(product)}</span>
@@ -349,7 +568,13 @@ export function CreateOrderForm({ products, categories }: Props) {
                                                 <div className={styles.quantityControl}>
                                                     <button
                                                         type="button"
-                                                        onClick={() => handleRemoveItem(product.id, hasSizes ? selectedSizeId : null)}
+                                                        onClick={() => {
+                                                            if (isHalfHalf && selectedSecondProductId) {
+                                                                handleRemoveItem(product.id, hasSizes ? selectedSizeId : null, selectedSecondProductId);
+                                                            } else {
+                                                                handleRemoveItem(product.id, hasSizes ? selectedSizeId : null);
+                                                            }
+                                                        }}
                                                         className={styles.quantityButton}
                                                     >
                                                         <Minus size={20} />
@@ -368,7 +593,10 @@ export function CreateOrderForm({ products, categories }: Props) {
                                                     type="button"
                                                     onClick={() => handleAddItem(product)}
                                                     className={styles.addButton}
-                                                    disabled={hasSizes && !selectedSizeId}
+                                                    disabled={
+                                                        (hasSizes && !selectedSizeId) || 
+                                                        (isHalfHalf && !selectedSecondProductId)
+                                                    }
                                                 >
                                                     <Plus size={20} />
                                                     Adicionar
@@ -387,13 +615,22 @@ export function CreateOrderForm({ products, categories }: Props) {
                         <h2>Resumo do Pedido</h2>
                         <div className={styles.itemsList}>
                             {orderItems.map((item, index) => {
-                                const sizeInfo = item.size_id && item.product.prices?.find(p => p.size.id === item.size_id);
-                                const displayName = sizeInfo
-                                    ? `${item.product.name} - ${sizeInfo.size.display}`
-                                    : item.product.name;
+                                const sizeInfo = item.size_id ? item.product.prices?.find(p => p.size.id === item.size_id) : undefined;
+                                let displayName = "";
+                                
+                                if (item.product_id_2 && item.product_2) {
+                                    // Pizza meia a meia
+                                    const sizeDisplay = sizeInfo ? sizeInfo.size.display : "";
+                                    displayName = `Pizza Meia: ${item.product.name} / ${item.product_2.name}${sizeDisplay ? ` - ${sizeDisplay}` : ""}`;
+                                } else {
+                                    // Pizza normal
+                                    displayName = sizeInfo
+                                        ? `${item.product.name} - ${sizeInfo.size.display}`
+                                        : item.product.name;
+                                }
 
                                 return (
-                                    <div key={`${item.product_id}-${item.size_id || 'no-size'}-${index}`} className={styles.orderItem}>
+                                    <div key={`${item.product_id}-${item.size_id || 'no-size'}-${item.product_id_2 || ''}-${index}`} className={styles.orderItem}>
                                         <div className={styles.itemInfo}>
                                             <span className={styles.itemName}>{displayName}</span>
                                             <span className={styles.itemPrice}>
@@ -405,7 +642,7 @@ export function CreateOrderForm({ products, categories }: Props) {
                                         </div>
                                         <button
                                             type="button"
-                                            onClick={() => handleRemoveItem(item.product_id, item.size_id)}
+                                            onClick={() => handleRemoveItem(item.product_id, item.size_id, item.product_id_2 || undefined)}
                                             className={styles.removeButton}
                                         >
                                             <X size={18} />

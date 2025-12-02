@@ -47,9 +47,13 @@ export interface OrderItem {
     order_id: string;
     product_id: string;
     size_id: string | null;
+    product_id_2?: string | null; // Segundo sabor (meia a meia)
+    size_id_2?: string | null; // Tamanho do segundo sabor
     price: number; // Preço histórico (no momento da venda)
     product: Product;
+    product_2?: Product; // Segundo produto (quando meia a meia)
     size: Size | null;
+    size_2?: Size | null; // Segundo tamanho (quando meia a meia)
     order: {
         id: string;
         table: number;

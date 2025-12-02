@@ -120,9 +120,18 @@ export function Modalorder() {
         
         const itemsHtml = order.map(item => {
             const itemTotal = (item.price * item.amount).toFixed(2);
-            const productName = item.size 
-                ? `${item.product.name} - ${item.size.display}`
-                : item.product.name;
+            let productName = "";
+            
+            if (item.product_id_2 && item.product_2) {
+                // Pizza meia a meia
+                const sizeDisplay = item.size?.display || "";
+                productName = `Pizza Meia: ${item.product.name} / ${item.product_2.name}${sizeDisplay ? ` - ${sizeDisplay}` : ""}`;
+            } else {
+                // Pizza normal
+                productName = item.size 
+                    ? `${item.product.name} - ${item.size.display}`
+                    : item.product.name;
+            }
             
             return `
                 <div class="item">
@@ -170,9 +179,19 @@ export function Modalorder() {
                     <span className={styles.table}>Mesa <b>{order[0].order.table}</b></span>
                 )}
              {order.map(item => {
-                const productName = item.size 
-                    ? `${item.product.name} - ${item.size.display}`
-                    : item.product.name;
+                let productName = "";
+                
+                if (item.product_id_2 && item.product_2) {
+                    // Pizza meia a meia
+                    const sizeDisplay = item.size?.display || "";
+                    productName = `Pizza Meia: ${item.product.name} / ${item.product_2.name}${sizeDisplay ? ` - ${sizeDisplay}` : ""}`;
+                } else {
+                    // Pizza normal
+                    productName = item.size 
+                        ? `${item.product.name} - ${item.size.display}`
+                        : item.product.name;
+                }
+                
                 const itemTotal = item.price * item.amount;
                 
                 return (
@@ -180,6 +199,7 @@ export function Modalorder() {
                         <span>Qtd: {item.amount} - <b>{productName}</b> - R$ {itemTotal.toFixed(2)}</span>
                         <span className={styles.description}> 
                             {item.product.description}
+                            {item.product_id_2 && item.product_2 && ` / ${item.product_2.description}`}
                         </span>
                     </section>
                 );

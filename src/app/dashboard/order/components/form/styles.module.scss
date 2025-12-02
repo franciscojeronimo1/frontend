@@ -352,3 +352,53 @@
     cursor: not-allowed;
 }
 
+.halfHalfContainer {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--gray-100);
+}
+
+.halfHalfCheckbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+
+    input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: var(--green-900);
+    }
+
+    span {
+        color: var(--white);
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    &:hover {
+        opacity: 0.8;
+    }
+}
+
+.secondFlavorContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.secondFlavorLabel {
+    color: var(--white);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.secondFlavorSelect {
+    width: 100%;
+}
+
