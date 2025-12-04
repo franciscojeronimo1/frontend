@@ -4,4 +4,5 @@ export interface OrderProps {
     status: boolean;
     draft: boolean;
     name: string;
+    address?: string | null; 
 }

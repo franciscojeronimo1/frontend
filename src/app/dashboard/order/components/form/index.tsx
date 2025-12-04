@@ -28,6 +28,7 @@ interface Props {
 export function CreateOrderForm({ products, categories }: Props) {
     const router = useRouter();
     const [name, setName] = useState("");
+    const [address, setAddress] = useState("");
     const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
     const [isCreating, setIsCreating] = useState(false);
     const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({}); // product_id -> size_id
@@ -329,7 +330,8 @@ export function CreateOrderForm({ products, categories }: Props) {
             // 1. Criar o pedido
             const orderResponse = await api.post("/order", {
                 table: 0,
-                name: name.trim()
+                name: name.trim(),
+                address: address.trim() || null
             }, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -440,6 +442,13 @@ export function CreateOrderForm({ products, categories }: Props) {
                         onChange={(e) => setName(e.target.value)}
                         className={styles.input}
                         required
+                    />
+                    <input
+                        type="text"
+                        placeholder="Endereço de entrega (opcional)"
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        className={styles.input}
                     />
                 </section>
 

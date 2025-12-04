@@ -51,6 +51,7 @@ export interface OrderItemProps {
         name: string | null ;
         draft: boolean;
         status: boolean;
+        address?: string | null;
     }
 }
 

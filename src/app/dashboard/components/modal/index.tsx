@@ -144,6 +144,8 @@ export function Modalorder() {
             `;
         }).join('');
 
+        const address = order[0].order?.address;
+        
         return `
             <div class="header">
                 <h2>PEDIDO</h2>
@@ -151,6 +153,7 @@ export function Modalorder() {
             <div class="client">
                 Cliente: ${clientName}
             </div>
+            ${address ? `<div class="client" style="margin-top: 5px; font-size: 12px;">Endereço: ${address}</div>` : ''}
             <div class="items">
                 ${itemsHtml}
             </div>
@@ -177,6 +180,11 @@ export function Modalorder() {
                     <span className={styles.table}>Cliente: <b>{order[0].order.name}</b></span>
                 ) : (
                     <span className={styles.table}>Mesa <b>{order[0].order.table}</b></span>
+                )}
+                {order[0].order?.address && (
+                    <span className={styles.table} style={{ display: 'block', marginTop: '8px' }}>
+                        Endereço: <b>{order[0].order.address}</b>
+                    </span>
                 )}
              {order.map(item => {
                 let productName = "";
