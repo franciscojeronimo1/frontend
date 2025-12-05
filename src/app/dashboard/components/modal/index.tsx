@@ -9,6 +9,16 @@ import { calculateTotalOrder } from '@/lib/helper';
 export function Modalorder() {
     const { onRequestClose, order, finishOrder} = use(OrderContext)
     
+    function getPaymentMethodLabel(method: string): string {
+        const labels: Record<string, string> = {
+            "PIX": "PIX",
+            "CARTAO": "Cartão",
+            "DINHEIRO": "Dinheiro",
+            "OUTROS": "Outros"
+        };
+        return labels[method] || method;
+    }
+    
     async function handleFinishOrder() {
         await finishOrder(order[0].order.id)
     }
@@ -145,6 +155,17 @@ export function Modalorder() {
         }).join('');
 
         const address = order[0].order?.address;
+        const paymentMethod = order[0].order?.payment_method;
+        
+        function getPaymentMethodLabel(method: string): string {
+            const labels: Record<string, string> = {
+                "PIX": "PIX",
+                "CARTAO": "Cartão",
+                "DINHEIRO": "Dinheiro",
+                "OUTROS": "Outros"
+            };
+            return labels[method] || method;
+        }
         
         return `
             <div class="header">
@@ -154,6 +175,7 @@ export function Modalorder() {
                 Cliente: ${clientName}
             </div>
             ${address ? `<div class="client" style="margin-top: 5px; font-size: 12px;">Endereço: ${address}</div>` : ''}
+            ${paymentMethod ? `<div class="client" style="margin-top: 5px; font-size: 12px;">Forma de pagamento: ${getPaymentMethodLabel(paymentMethod)}</div>` : ''}
             <div class="items">
                 ${itemsHtml}
             </div>
@@ -184,6 +206,11 @@ export function Modalorder() {
                 {order[0].order?.address && (
                     <span className={styles.table} style={{ display: 'block', marginTop: '8px' }}>
                         Endereço: <b>{order[0].order.address}</b>
+                    </span>
+                )}
+                {order[0].order?.payment_method && (
+                    <span className={styles.table} style={{ display: 'block', marginTop: '8px' }}>
+                        Forma de pagamento: <b>{getPaymentMethodLabel(order[0].order.payment_method)}</b>
                     </span>
                 )}
              {order.map(item => {

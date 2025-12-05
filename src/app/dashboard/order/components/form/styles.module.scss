@@ -40,6 +40,12 @@
     }
 }
 
+.paymentSelect {
+    min-width: 180px;
+    max-width: 220px;
+    flex: 0 0 auto;
+}
+
 .productsSection {
     h2 {
         color: var(--white);

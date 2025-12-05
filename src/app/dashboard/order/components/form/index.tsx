@@ -29,6 +29,7 @@ export function CreateOrderForm({ products, categories }: Props) {
     const router = useRouter();
     const [name, setName] = useState("");
     const [address, setAddress] = useState("");
+    const [paymentMethod, setPaymentMethod] = useState<string>("");
     const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
     const [isCreating, setIsCreating] = useState(false);
     const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({}); // product_id -> size_id
@@ -49,6 +50,13 @@ export function CreateOrderForm({ products, categories }: Props) {
             label: category.name
         }));
     }, [categories]);
+
+    const paymentMethodOptions: SelectOption[] = useMemo(() => [
+        { value: "PIX", label: "PIX" },
+        { value: "CARTAO", label: "Cartão" },
+        { value: "DINHEIRO", label: "Dinheiro" },
+        { value: "OUTROS", label: "Outros" }
+    ], []);
 
     function getProductPrice(product: Product, sizeId?: string): number | null {
         if (!product.has_sizes) {
@@ -331,7 +339,8 @@ export function CreateOrderForm({ products, categories }: Props) {
             const orderResponse = await api.post("/order", {
                 table: 0,
                 name: name.trim(),
-                address: address.trim() || null
+                address: address.trim() || null,
+                payment_method: paymentMethod || null
             }, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -450,6 +459,13 @@ export function CreateOrderForm({ products, categories }: Props) {
                         onChange={(e) => setAddress(e.target.value)}
                         className={styles.input}
                     />
+                    <Select
+                        options={paymentMethodOptions}
+                        value={paymentMethod}
+                        onChange={setPaymentMethod}
+                        placeholder="Forma de pagamento"
+                        className={styles.paymentSelect}
+                    />
                 </section>
 
                 <button
@@ -460,6 +476,53 @@ export function CreateOrderForm({ products, categories }: Props) {
                 >
                     {isCreating ? "Criando pedido..." : "Criar Pedido"}
                 </button>
+
+                {orderItems.length > 0 && (
+                    <section className={styles.orderSummary}>
+                        <h2>Resumo do Pedido</h2>
+                        <div className={styles.itemsList}>
+                            {orderItems.map((item, index) => {
+                                const sizeInfo = item.size_id ? item.product.prices?.find(p => p.size.id === item.size_id) : undefined;
+                                let displayName = "";
+                                
+                                if (item.product_id_2 && item.product_2) {
+                                    // Pizza meia a meia
+                                    const sizeDisplay = sizeInfo ? sizeInfo.size.display : "";
+                                    displayName = `Pizza Meia: ${item.product.name} / ${item.product_2.name}${sizeDisplay ? ` - ${sizeDisplay}` : ""}`;
+                                } else {
+                                    // Pizza normal
+                                    displayName = sizeInfo
+                                        ? `${item.product.name} - ${sizeInfo.size.display}`
+                                        : item.product.name;
+                                }
+
+                                return (
+                                    <div key={`${item.product_id}-${item.size_id || 'no-size'}-${item.product_id_2 || ''}-${index}`} className={styles.orderItem}>
+                                        <div className={styles.itemInfo}>
+                                            <span className={styles.itemName}>{displayName}</span>
+                                            <span className={styles.itemPrice}>
+                                                R$ {item.selectedPrice.toFixed(2)} x {item.amount}
+                                            </span>
+                                        </div>
+                                        <div className={styles.itemTotal}>
+                                            R$ {(item.selectedPrice * item.amount).toFixed(2)}
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleRemoveItem(item.product_id, item.size_id, item.product_id_2 || undefined)}
+                                            className={styles.removeButton}
+                                        >
+                                            <X size={18} />
+                                        </button>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        <div className={styles.total}>
+                            <span>Total: R$ {calculateTotal().toFixed(2)}</span>
+                        </div>
+                    </section>
+                )}
 
                 <section className={styles.productsSection}>
                     <div className={styles.productsHeader}>
@@ -618,53 +681,6 @@ export function CreateOrderForm({ products, categories }: Props) {
                         )}
                     </div>
                 </section>
-
-                {orderItems.length > 0 && (
-                    <section className={styles.orderSummary}>
-                        <h2>Resumo do Pedido</h2>
-                        <div className={styles.itemsList}>
-                            {orderItems.map((item, index) => {
-                                const sizeInfo = item.size_id ? item.product.prices?.find(p => p.size.id === item.size_id) : undefined;
-                                let displayName = "";
-                                
-                                if (item.product_id_2 && item.product_2) {
-                                    // Pizza meia a meia
-                                    const sizeDisplay = sizeInfo ? sizeInfo.size.display : "";
-                                    displayName = `Pizza Meia: ${item.product.name} / ${item.product_2.name}${sizeDisplay ? ` - ${sizeDisplay}` : ""}`;
-                                } else {
-                                    // Pizza normal
-                                    displayName = sizeInfo
-                                        ? `${item.product.name} - ${sizeInfo.size.display}`
-                                        : item.product.name;
-                                }
-
-                                return (
-                                    <div key={`${item.product_id}-${item.size_id || 'no-size'}-${item.product_id_2 || ''}-${index}`} className={styles.orderItem}>
-                                        <div className={styles.itemInfo}>
-                                            <span className={styles.itemName}>{displayName}</span>
-                                            <span className={styles.itemPrice}>
-                                                R$ {item.selectedPrice.toFixed(2)} x {item.amount}
-                                            </span>
-                                        </div>
-                                        <div className={styles.itemTotal}>
-                                            R$ {(item.selectedPrice * item.amount).toFixed(2)}
-                                        </div>
-                                        <button
-                                            type="button"
-                                            onClick={() => handleRemoveItem(item.product_id, item.size_id, item.product_id_2 || undefined)}
-                                            className={styles.removeButton}
-                                        >
-                                            <X size={18} />
-                                        </button>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                        <div className={styles.total}>
-                            <span>Total: R$ {calculateTotal().toFixed(2)}</span>
-                        </div>
-                    </section>
-                )}
             </div>
         </main>
     );

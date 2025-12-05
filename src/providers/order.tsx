@@ -52,6 +52,7 @@ export interface OrderItemProps {
         draft: boolean;
         status: boolean;
         address?: string | null;
+        payment_method?: "PIX" | "CARTAO" | "DINHEIRO" | "OUTROS" | null;
     }
 }
 
