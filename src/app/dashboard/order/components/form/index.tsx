@@ -1,6 +1,6 @@
 "use client";
 import styles from "./styles.module.scss";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { api } from "@/services/api";
 import { getCookieClient } from '@/lib/cookieClient';
 import { toast } from "sonner";
@@ -20,6 +20,11 @@ interface OrderItem {
     size_id_2?: string | null; // Tamanho do segundo sabor (deve ser igual ao primeiro)
 }
 
+interface Client {
+    name: string;
+    address: string;
+}
+
 interface Props {
     products: Product[];
     categories: Category[];
@@ -36,6 +41,11 @@ export function CreateOrderForm({ products, categories }: Props) {
     const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
     const [halfHalfMode, setHalfHalfMode] = useState<Record<string, boolean>>({}); // product_id -> isHalfHalf
     const [selectedSecondFlavor, setSelectedSecondFlavor] = useState<Record<string, string>>({}); // product_id -> second_product_id
+    const [clientSuggestions, setClientSuggestions] = useState<Client[]>([]);
+    const [showSuggestions, setShowSuggestions] = useState(false);
+    const [isSearchingClients, setIsSearchingClients] = useState(false);
+    const nameInputRef = useRef<HTMLInputElement>(null);
+    const suggestionsRef = useRef<HTMLDivElement>(null);
 
     const filteredProducts = useMemo(() => {
         if (!selectedCategoryId) {
@@ -57,6 +67,78 @@ export function CreateOrderForm({ products, categories }: Props) {
         { value: "DINHEIRO", label: "Dinheiro" },
         { value: "OUTROS", label: "Outros" }
     ], []);
+
+    // Buscar clientes quando o nome mudar
+    useEffect(() => {
+        const searchClients = async () => {
+            if (name.trim().length < 2) {
+                setClientSuggestions([]);
+                setShowSuggestions(false);
+                return;
+            }
+
+            setIsSearchingClients(true);
+            try {
+                const token = getCookieClient();
+                const response = await api.get("/order/clients", {
+                    params: {
+                        search: name.trim()
+                    },
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                const clients: Client[] = response.data || [];
+                setClientSuggestions(clients);
+                setShowSuggestions(clients.length > 0);
+            } catch (error) {
+                console.error("Error searching clients:", error);
+                setClientSuggestions([]);
+                setShowSuggestions(false);
+            } finally {
+                setIsSearchingClients(false);
+            }
+        };
+
+        // Debounce: aguarda 300ms após o usuário parar de digitar
+        const timeoutId = setTimeout(searchClients, 300);
+
+        return () => clearTimeout(timeoutId);
+    }, [name]);
+
+    // Fechar sugestões ao clicar fora
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                suggestionsRef.current &&
+                !suggestionsRef.current.contains(event.target as Node) &&
+                nameInputRef.current &&
+                !nameInputRef.current.contains(event.target as Node)
+            ) {
+                setShowSuggestions(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    function handleSelectClient(client: Client) {
+        setName(client.name);
+        setAddress(client.address || "");
+        setShowSuggestions(false);
+        setClientSuggestions([]);
+    }
+
+    function handleNameChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const value = e.target.value;
+        setName(value);
+        // Se o usuário apagar o nome, limpar o endereço também
+        if (value.trim() === "") {
+            setAddress("");
+        }
+    }
 
     function getProductPrice(product: Product, sizeId?: string): number | null {
         if (!product.has_sizes) {
@@ -444,14 +526,44 @@ export function CreateOrderForm({ products, categories }: Props) {
 
             <div className={styles.formContainer}>
                 <section className={styles.orderInfo}>
-                    <input
-                        type="text"
-                        placeholder="Nome do cliente"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className={styles.input}
-                        required
-                    />
+                    <div className={styles.nameInputContainer}>
+                        <input
+                            ref={nameInputRef}
+                            type="text"
+                            placeholder="Nome do cliente"
+                            value={name}
+                            onChange={handleNameChange}
+                            onFocus={() => {
+                                if (clientSuggestions.length > 0) {
+                                    setShowSuggestions(true);
+                                }
+                            }}
+                            className={styles.input}
+                            required
+                        />
+                        {showSuggestions && clientSuggestions.length > 0 && (
+                            <div ref={suggestionsRef} className={styles.clientSuggestions}>
+                                {isSearchingClients ? (
+                                    <div className={styles.suggestionItem}>
+                                        <span>Buscando...</span>
+                                    </div>
+                                ) : (
+                                    clientSuggestions.map((client, index) => (
+                                        <div
+                                            key={`${client.name}-${index}`}
+                                            className={styles.suggestionItem}
+                                            onClick={() => handleSelectClient(client)}
+                                        >
+                                            <span className={styles.clientName}>{client.name}</span>
+                                            {client.address && (
+                                                <span className={styles.clientAddress}>{client.address}</span>
+                                            )}
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        )}
+                    </div>
                     <input
                         type="text"
                         placeholder="Endereço de entrega (opcional)"
