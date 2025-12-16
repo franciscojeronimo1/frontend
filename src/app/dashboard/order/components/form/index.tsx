@@ -132,7 +132,7 @@ export function CreateOrderForm({ products, categories }: Props) {
     }
 
     function handleNameChange(e: React.ChangeEvent<HTMLInputElement>) {
-        const value = e.target.value;
+        const value = e.target.value.toUpperCase();
         setName(value);
         // Se o usuário apagar o nome, limpar o endereço também
         if (value.trim() === "") {
@@ -568,7 +568,7 @@ export function CreateOrderForm({ products, categories }: Props) {
                         type="text"
                         placeholder="Endereço de entrega (opcional)"
                         value={address}
-                        onChange={(e) => setAddress(e.target.value)}
+                        onChange={(e) => setAddress(e.target.value.toUpperCase())}
                         className={styles.input}
                     />
                     <Select
