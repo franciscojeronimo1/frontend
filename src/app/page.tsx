@@ -80,9 +80,7 @@ export default function Page() {
           </button> 
       </form>
 
-      <Link href="/signup" className={styles.text}>
-        Não possui conta? Cadastre-se
-      </Link>
+
 
     </section>
   </div>
