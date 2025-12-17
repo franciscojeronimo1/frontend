@@ -33,6 +33,7 @@ export function Header() {
 
         <nav>
           <Link href="/dashboard/category">Categoria</Link>
+          <Link href="/dashboard/sales">Vendas</Link>
           <Link href="/dashboard/size">Tamanhos</Link>
           <Link href="/dashboard/products">Listar Produtos</Link>
           <Link href="/dashboard/product">Novo Produto</Link>

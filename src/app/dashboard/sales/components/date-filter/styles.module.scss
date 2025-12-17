@@ -1,0 +1,124 @@
+.dateFilterContainer {
+  background: var(--dark-900);
+  padding: 24px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.periodButtons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+
+  button {
+    padding: 10px 20px;
+    background: var(--dark-700);
+    color: var(--white);
+    border: 1px solid var(--gray-100);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+
+    &:hover {
+      background: var(--dark-900);
+      border-color: var(--red-900);
+    }
+
+    &.active {
+      background: var(--red-900);
+      border-color: var(--red-900);
+      color: var(--white);
+    }
+  }
+}
+
+.dateInputs {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.inputGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  label {
+    color: var(--white);
+    font-size: 0.9rem;
+    min-width: 100px;
+  }
+
+  input[type="date"] {
+    padding: 10px;
+    background: var(--dark-700);
+    color: var(--white);
+    border: 1px solid var(--gray-100);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    flex: 1;
+    max-width: 200px;
+
+    &:focus {
+      border-color: var(--red-900);
+    }
+  }
+}
+
+.customDateGroup {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.todayButton,
+.applyButton {
+  padding: 10px 20px;
+  background: var(--green-900);
+  color: var(--dark-900);
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.3s;
+
+  &:hover:not(:disabled) {
+    background: var(--green-900);
+    opacity: 0.9;
+    transform: scale(1.05);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+@media (max-width: 720px) {
+  .periodButtons {
+    button {
+      flex: 1;
+      min-width: calc(50% - 6px);
+    }
+  }
+
+  .customDateGroup {
+    flex-direction: column;
+    align-items: stretch;
+
+    .inputGroup {
+      flex-direction: column;
+      align-items: stretch;
+
+      label {
+        min-width: auto;
+      }
+
+      input[type="date"] {
+        max-width: 100%;
+      }
+    }
+  }
+}
