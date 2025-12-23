@@ -63,6 +63,7 @@ type OrderContextData = {
     onRequestClose: () => void;
     order: OrderItemProps[]
     finishOrder: (prder_id : string) => Promise<void>
+    finishMultipleOrders: (order_ids: string[]) => Promise<void>
 }
 
 type orderProviderProps = {
@@ -119,9 +120,51 @@ export function OrderProvider({children}: orderProviderProps){
         router.refresh()
         setIsOpen(false)
     }
+
+    async function finishMultipleOrders(order_ids: string[]) {
+        if (order_ids.length === 0) {
+            toast.error("Selecione pelo menos um pedido para finalizar!")
+            return;
+        }
+
+        const token = getCookieClient()
+        let successCount = 0
+        let errorCount = 0
+
+        const promises = order_ids.map(async (order_id) => {
+            const data = {
+                order_id: order_id
+            }
+
+            try {
+                await api.put("/order/finish", data, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                successCount++
+            } catch(err) {
+                console.log(err)
+                errorCount++
+            }
+        })
+
+        await Promise.all(promises)
+
+        if (errorCount > 0 && successCount > 0) {
+            toast.warning(`${successCount} pedido(s) finalizado(s) com sucesso, mas ${errorCount} falharam!`)
+        } else if (errorCount > 0) {
+            toast.error(`Falha ao finalizar ${errorCount} pedido(s)!`)
+            return
+        } else {
+            toast.success(`${successCount} pedido(s) finalizado(s) com sucesso!`)
+        }
+
+        router.refresh()
+    }
     
     return(
-        <OrderContext.Provider value={{isOpen, onRequestOpen, onRequestClose, finishOrder, order}}>
+        <OrderContext.Provider value={{isOpen, onRequestOpen, onRequestClose, finishOrder, finishMultipleOrders, order}}>
             {children}
         </OrderContext.Provider>
     )
