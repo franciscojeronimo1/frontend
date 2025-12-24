@@ -5,8 +5,8 @@ import { Toaster } from "sonner";
 
 
 export const metadata: Metadata = {
-  title: "Pizzaria da Claudia",
-  description: "Claudia Delivery",
+  title: "Delivery",
+  description: "Delivery",
 };
 
 export default function RootLayout({
