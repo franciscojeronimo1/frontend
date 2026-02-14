@@ -27,8 +27,8 @@ export function Header() {
           <Link href="/dashboard/category">Categoria</Link>
           <Link href="/dashboard/sales">Vendas</Link>
           <Link href="/dashboard/size">Tamanhos</Link>
-          <Link href="/dashboard/products">Listar Produtos</Link>
-          <Link href="/dashboard/product">Novo Produto</Link>
+          <Link href="/dashboard/products">Produtos</Link>
+          <Link href="/dashboard/product">Novo produto</Link>
           <Link href="/dashboard/order">Criar pedido</Link>
 
           <form action={handleLogout}>
