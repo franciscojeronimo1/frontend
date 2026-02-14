@@ -63,6 +63,12 @@
     &:focus {
       border-color: var(--red-900);
     }
+
+    &::-webkit-calendar-picker-indicator {
+      filter: invert(84%) sepia(32%) saturate(6542%) hue-rotate(92deg) brightness(102%) contrast(101%);
+      cursor: pointer;
+      opacity: 1;
+    }
   }
 }
 
