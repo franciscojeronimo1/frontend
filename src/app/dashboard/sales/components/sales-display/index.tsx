@@ -24,7 +24,9 @@ export function SalesDisplay({ salesData, loading }: SalesDisplayProps) {
   };
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+    // YYYY-MM-DD do back: interpretar como dia local (evita UTC virar dia anterior no Brasil)
+    const [y, m, d] = dateString.split("-").map(Number);
+    const date = new Date(y, m - 1, d);
     return new Intl.DateTimeFormat("pt-BR", {
       day: "2-digit",
       month: "2-digit",

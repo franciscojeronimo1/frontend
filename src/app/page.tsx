@@ -1,6 +1,4 @@
 import styles from './page.module.scss';
-import  Image from 'next/image';
-import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { api } from '@/services/api';
 import { cookies } from 'next/headers';
@@ -50,13 +48,7 @@ export default function Page() {
   return (
     <>
   <div className={styles.containerCenter}>
-      <Image 
-      src="/logo.svg" 
-      alt="logo da pizzaria"
-      width={190}
-      height={60}
-       />
-  
+      <h1 className={styles.title}>Login</h1>
 
     <section className={styles.login}>
       <form action={handleLogin}>

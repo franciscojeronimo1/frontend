@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import styles from "./styles.module.scss";
-import Image from "next/image";
 import { LogOutIcon } from "lucide-react";
 import { deleteCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
@@ -20,15 +19,8 @@ export function Header() {
   return (
     <header className={styles.headerContainer}>
       <div className={styles.headerContent}>
-        <Link href="/dashboard">
-          <Image
-            src="/logo.svg"
-            width={190}
-            height={60}
-            alt="Logo Pizzaria"
-            priority={true}
-            quality={100}
-          />
+        <Link href="/dashboard" className={styles.dashboardLink}>
+          Dashboard
         </Link>
 
         <nav>

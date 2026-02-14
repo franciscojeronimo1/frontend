@@ -7,6 +7,14 @@
   justify-content: center;
 }
 
+.title {
+  color: var(--white);
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
 .login {
   margin-top: 24px;
   display: flex;

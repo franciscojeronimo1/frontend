@@ -13,6 +13,17 @@
     align-items: center;
     justify-content: space-between;
 
+    .dashboardLink {
+        color: var(--white);
+        text-decoration: none;
+        font-size: 1rem;
+        transition: color 0.8s;
+
+        &:hover {
+            color: var(--red-900);
+        }
+    }
+
     nav {
         display: flex;
         align-items: center;
