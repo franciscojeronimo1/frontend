@@ -5,6 +5,22 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  position: relative;
+}
+
+.aboutLink {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  color: var(--white);
+  font-size: 0.95rem;
+  font-weight: 500;
+  opacity: 0.9;
+  transition: opacity 0.2s;
+  &:hover {
+    opacity: 1;
+    text-decoration: underline;
+  }
 }
 
 .title {

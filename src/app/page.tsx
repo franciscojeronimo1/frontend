@@ -2,6 +2,7 @@ import styles from './page.module.scss';
 import { redirect } from 'next/navigation';
 import { api } from '@/services/api';
 import { cookies } from 'next/headers';
+import Link from 'next/link';
 
 export default function Page() {
 
@@ -48,6 +49,7 @@ export default function Page() {
   return (
     <>
   <div className={styles.containerCenter}>
+      <Link href="/sobre" className={styles.aboutLink}>Como funciona</Link>
       <h1 className={styles.title}>Login</h1>
 
     <section className={styles.login}>
