@@ -1,4 +1,5 @@
-# 🍕 Sistema de Gerenciamento de Pizzaria
+# 🍕 Sistema de Gerenciamento de Pizzaria 
+https://frontend-kappa-seven-mjt5nb6mri.vercel.app/sobre
 
 Sistema completo de gerenciamento para pizzarias desenvolvido com Next.js 16, React 19 e TypeScript. Aplicação web moderna que permite gerenciar pedidos, produtos, categorias, tamanhos e acompanhar vendas em tempo real.
 
