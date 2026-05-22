@@ -19,7 +19,10 @@ export function Modalorder() {
     
     function handleShareWhatsApp() {
         try {
-            shareOrderViaWhatsApp(order);
+            const opened = shareOrderViaWhatsApp(order);
+            if (!opened) {
+                toast.error('Não foi possível abrir o WhatsApp. Verifique se pop-ups estão permitidos.');
+            }
         } catch {
             toast.error('Não foi possível abrir o WhatsApp.');
         }

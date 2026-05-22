@@ -26,7 +26,7 @@ export function formatOrderItemName(item: OrderItemProps): string {
 export function formatOrderShareText(order: OrderItemProps[]): string {
   const clientName = order[0].order?.name || `Mesa ${order[0].order.table}`;
   const total = calculateTotalOrder(order).toFixed(2);
-  const lines: string[] = ['🍕 *PEDIDO*', '', `*Cliente:* ${clientName}`];
+  const lines: string[] = ['📋 *PEDIDO*', '', `*Cliente:* ${clientName}`];
 
   if (order[0].order?.address) {
     lines.push(`*Endereço:* ${order[0].order.address}`);
@@ -58,11 +58,18 @@ export function formatOrderShareText(order: OrderItemProps[]): string {
   return lines.join('\n');
 }
 
-/** Abre o WhatsApp (app ou Web) com o pedido pronto para enviar. */
-export function shareOrderViaWhatsApp(order: OrderItemProps[]): void {
-  const url = `https://wa.me/?text=${encodeURIComponent(formatOrderShareText(order))}`;
-  const opened = window.open(url, '_blank', 'noopener,noreferrer');
-  if (!opened) {
-    window.location.assign(url);
-  }
+/** Abre o WhatsApp em nova aba/janela sem sair da página atual. */
+export function shareOrderViaWhatsApp(order: OrderItemProps[]): boolean {
+  const text = encodeURIComponent(formatOrderShareText(order));
+  const url = `https://api.whatsapp.com/send?text=${text}`;
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  return true;
 }
