@@ -226,7 +226,7 @@ export function Form({ categories, sizes }: Props) {
                     <option value="">Selecione uma categoria</option>
                     {categories.map((category) => (
                         <option key={category.id} value={category.id}>
-                            {category.name} {category.has_sizes ? "(com tamanhos)" : "(sem tamanhos)"}
+                            {category.name}
                         </option>
                     ))}
                 </select>
