@@ -4,6 +4,7 @@ import Link from "next/link";
 import styles from "./styles.module.scss";
 import { LogOutIcon } from "lucide-react";
 import { deleteCookie } from "cookies-next";
+import { SESSION_COOKIE_NAME, SESSION_COOKIE_OPTIONS } from "@/lib/session";
 import { useRouter } from "next/navigation";
 import {toast} from "sonner"
 
@@ -11,7 +12,7 @@ export function Header() {
 
   const router = useRouter();
   async function handleLogout() {
-    deleteCookie("session", { path: "/" });
+    deleteCookie(SESSION_COOKIE_NAME, { path: SESSION_COOKIE_OPTIONS.path });
     toast.success("Deslogado com sucesso!")
     router.replace("/");
   }
