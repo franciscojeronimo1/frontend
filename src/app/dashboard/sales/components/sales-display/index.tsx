@@ -1,5 +1,6 @@
 "use client";
 
+import { formatBrazilDateString } from "@/lib/date";
 import styles from "./styles.module.scss";
 
 export interface SalesData {
@@ -21,17 +22,6 @@ export function SalesDisplay({ salesData, loading }: SalesDisplayProps) {
       style: "currency",
       currency: "BRL",
     }).format(value);
-  };
-
-  const formatDate = (dateString: string) => {
-    // YYYY-MM-DD do back: interpretar como dia local (evita UTC virar dia anterior no Brasil)
-    const [y, m, d] = dateString.split("-").map(Number);
-    const date = new Date(y, m - 1, d);
-    return new Intl.DateTimeFormat("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    }).format(date);
   };
 
   if (loading) {
@@ -81,10 +71,11 @@ export function SalesDisplay({ salesData, loading }: SalesDisplayProps) {
         <div className={styles.periodLabel}>Período:</div>
         <div className={styles.periodDates}>
           {isSameDate ? (
-            <span>{formatDate(salesData.start_date)}</span>
+            <span>{formatBrazilDateString(salesData.start_date)}</span>
           ) : (
             <span>
-              {formatDate(salesData.start_date)} até {formatDate(salesData.end_date)}
+              {formatBrazilDateString(salesData.start_date)} até{" "}
+              {formatBrazilDateString(salesData.end_date)}
             </span>
           )}
         </div>

@@ -7,6 +7,7 @@ import { api } from "@/services/api";
 import { getCookieClient } from "@/lib/cookieClient";
 import styles from "./styles.module.scss";
 import { toast } from "sonner";
+import { getBrazilDateString } from "@/lib/date";
 
 export default function SalesPage() {
   const [salesData, setSalesData] = useState<SalesData | null>(null);
@@ -74,7 +75,7 @@ export default function SalesPage() {
   };
 
   useEffect(() => {
-    const today = new Date().toISOString().split("T")[0];
+    const today = getBrazilDateString();
     fetchSales({ period: "day", date: today });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

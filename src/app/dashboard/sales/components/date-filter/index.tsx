@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { getBrazilDateString } from "@/lib/date";
 import styles from "./styles.module.scss";
 
 export type PeriodType = "day" | "week" | "month" | "custom";
@@ -32,7 +33,7 @@ export function DateFilter({ onFilterChange }: DateFilterProps) {
     }
 
     if (newPeriod === "day") {
-      const today = new Date().toISOString().split("T")[0];
+      const today = getBrazilDateString();
       setDate(today);
       onFilterChange({ period: newPeriod, date: today });
     } else if (newPeriod !== "custom") {
@@ -58,7 +59,7 @@ export function DateFilter({ onFilterChange }: DateFilterProps) {
   };
 
   const handleTodayClick = () => {
-    const today = new Date().toISOString().split("T")[0];
+    const today = getBrazilDateString();
     setDate(today);
     setPeriod("day");
     onFilterChange({ period: "day", date: today });
