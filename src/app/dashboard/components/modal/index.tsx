@@ -1,26 +1,30 @@
 'use client'
-import { X, Printer } from 'lucide-react';
+import { X, Printer, Share2 } from 'lucide-react';
 import styles from './styles.module.scss';
 import { use, useState } from 'react'
 import { OrderContext } from '@/providers/order';
 import { calculateTotalOrder } from '@/lib/helper';
+import {
+    formatOrderItemName,
+    getPaymentMethodLabel,
+    shareOrderViaWhatsApp,
+} from '@/lib/orderShare';
 import { ConfirmModal } from '@/app/dashboard/components/confirm-modal';
+import { toast } from 'sonner';
 
 
 export function Modalorder() {
     const { onRequestClose, order, finishOrder} = use(OrderContext)
     const [showFinishConfirm, setShowFinishConfirm] = useState(false)
     
-    function getPaymentMethodLabel(method: string): string {
-        const labels: Record<string, string> = {
-            "PIX": "PIX",
-            "CARTAO": "Cartão",
-            "DINHEIRO": "Dinheiro",
-            "OUTROS": "Outros"
-        };
-        return labels[method] || method;
+    function handleShareWhatsApp() {
+        try {
+            shareOrderViaWhatsApp(order);
+        } catch {
+            toast.error('Não foi possível abrir o WhatsApp.');
+        }
     }
-    
+
     async function handleFinishOrder() {
         await finishOrder(order[0].order.id)
     }
@@ -132,18 +136,7 @@ export function Modalorder() {
         
         const itemsHtml = order.map(item => {
             const itemTotal = (item.price * item.amount).toFixed(2);
-            let productName = "";
-            
-            if (item.product_id_2 && item.product_2) {
-                // Pizza meia a meia
-                const sizeDisplay = item.size?.display || "";
-                productName = `Pizza Meia: ${item.product.name} / ${item.product_2.name}${sizeDisplay ? ` - ${sizeDisplay}` : ""}`;
-            } else {
-                // Pizza normal
-                productName = item.size 
-                    ? `${item.product.name} - ${item.size.display}`
-                    : item.product.name;
-            }
+            const productName = formatOrderItemName(item);
             
             return `
                 <div class="item">
@@ -158,16 +151,6 @@ export function Modalorder() {
 
         const address = order[0].order?.address;
         const paymentMethod = order[0].order?.payment_method;
-        
-        function getPaymentMethodLabel(method: string): string {
-            const labels: Record<string, string> = {
-                "PIX": "PIX",
-                "CARTAO": "Cartão",
-                "DINHEIRO": "Dinheiro",
-                "OUTROS": "Outros"
-            };
-            return labels[method] || method;
-        }
         
         return `
             <div class="header">
@@ -216,19 +199,7 @@ export function Modalorder() {
                     </span>
                 )}
              {order.map(item => {
-                let productName = "";
-                
-                if (item.product_id_2 && item.product_2) {
-                    // Pizza meia a meia
-                    const sizeDisplay = item.size?.display || "";
-                    productName = `Pizza Meia: ${item.product.name} / ${item.product_2.name}${sizeDisplay ? ` - ${sizeDisplay}` : ""}`;
-                } else {
-                    // Pizza normal
-                    productName = item.size 
-                        ? `${item.product.name} - ${item.size.display}`
-                        : item.product.name;
-                }
-                
+                const productName = formatOrderItemName(item);
                 const itemTotal = item.price * item.amount;
                 
                 return (
@@ -244,9 +215,21 @@ export function Modalorder() {
 
              <h3 className={styles.total}>Valor total: R$ {calculateTotalOrder(order)}</h3>
                 <div className={styles.buttonsContainer}>
-                    <button className={styles.printButton} onClick={handlePrint}>
-                        <Printer size={20} />
+                    <button
+                        type="button"
+                        className={styles.printButton}
+                        onClick={handlePrint}
+                    >
+                        <Printer size={18} />
                         Imprimir
+                    </button>
+                    <button
+                        type="button"
+                        className={styles.whatsappButton}
+                        onClick={handleShareWhatsApp}
+                    >
+                        <Share2 size={18} />
+                        WhatsApp
                     </button>
                     <button
                         type="button"
