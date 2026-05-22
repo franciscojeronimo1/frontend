@@ -1,83 +1,20 @@
 import styles from './page.module.scss';
-import { redirect } from 'next/navigation';
-import { api } from '@/services/api';
-import { cookies } from 'next/headers';
 import Link from 'next/link';
+import { LoginForm } from './login-form';
 
 export default function Page() {
-
-  async function handleLogin(formData: FormData){
-    'use server'
-
-    const email = formData.get('email')
-    const password = formData.get('password')
-     
-    if(email === '' || password === ''){
-      return;
-    }
-
-    try {
-     const response = await api.post('/session', {
-        email,
-        password
-      })
-
-      if (!response.data.token) {
-        return;
-      }
-      console.log(response.data);
-
-      const expressTime = 60 * 60 * 24 * 30 * 1000; // 30 dias
-      const cookiesStore = await cookies();
-      cookiesStore.set("session", response.data.token, {
-        maxAge: expressTime,
-        path: '/',
-        httpOnly: false,
-        secure: process.env.NODE_ENV === 'production' ,
-      })
-
-    }
-    catch (error) {
-      console.log(error);
-      return;
-    }
-    
-    redirect('/dashboard');
-  }
-
-
   return (
     <>
-  <div className={styles.containerCenter}>
-      <Link href="/sobre" className={styles.aboutLink}>Como funciona</Link>
-      <h1 className={styles.title}>Login</h1>
+      <div className={styles.containerCenter}>
+        <Link href="/sobre" className={styles.aboutLink}>
+          Como funciona
+        </Link>
+        <h1 className={styles.title}>Login</h1>
 
-    <section className={styles.login}>
-      <form action={handleLogin}>
-        <input
-        type="email"
-        required
-        name="email"
-        placeholder='Digite seu email...'
-        className={styles.input}
-        />
-
-        <input
-        type="password"
-        required
-        name="password"
-        placeholder='***********'
-        className={styles.input}
-        />
-
-        <button type='submit'className={styles.button} >Acessar
-          </button> 
-      </form>
-
-
-
-    </section>
-  </div>
+        <section className={styles.login}>
+          <LoginForm />
+        </section>
+      </div>
     </>
-  )
+  );
 }

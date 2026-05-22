@@ -85,6 +85,17 @@
   color: rgab(255, 255, 255, 0.700);
 }
 
+.errorMessage {
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background-color: rgba(220, 38, 38, 0.15);
+  border: 1px solid var(--red-900);
+  color: #fecaca;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
 .text {
   color: var(--white);
   font-size: 18px;
