@@ -5,5 +5,12 @@
     background-color: var(--green-900);
     font-weight: bold;
     font-size: 16px;
-    color: var(--white);
+    color: var(--black);
+    cursor: pointer;
+    transition: opacity 0.2s;
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
 }

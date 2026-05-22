@@ -8,7 +8,6 @@ import { Button } from "@/app/dashboard/components/button";
 import { api } from "@/services/api";
 import { getCookieClient } from '@/lib/cookieClient';
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import { Category, Size } from "@/lib/types";
 
 interface Props {
@@ -17,7 +16,7 @@ interface Props {
 }
 
 export function Form({ categories, sizes }: Props) {
-    const router = useRouter();
+    const [isSubmitting, setIsSubmitting] = useState(false);
     // const [image, setImage] = useState<File | null>();
     // const [previewImage, setPreviewImage] = useState("");
     const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
@@ -27,14 +26,14 @@ export function Form({ categories, sizes }: Props) {
 
     const selectedCategory = categories.find(c => c.id === selectedCategoryId);
     const categoryHasSizes = selectedCategory?.has_sizes || false;
-    
+
     // Debug: verificar categoria selecionada
     useEffect(() => {
         if (selectedCategory) {
-           
+
 
         } else if (selectedCategoryId) {
-           
+
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedCategoryId]); // Apenas selectedCategoryId como dependência para evitar mudanças de tamanho
@@ -55,10 +54,19 @@ export function Form({ categories, sizes }: Props) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedCategoryId, categoryHasSizes]); // Removido sizes para evitar mudança de tamanho do array
 
+    function resetForm(form: HTMLFormElement) {
+        form.reset();
+        setSelectedCategoryId("");
+        setHasCustomPrices(false);
+        setPrice("");
+        setSizePrices({});
+    }
+
     async function handleRegisterProduct(e: React.FormEvent) {
         e.preventDefault();
+        const form = e.target as HTMLFormElement;
 
-        const formData = new FormData(e.target as HTMLFormElement);
+        const formData = new FormData(form);
         const categoryId = formData.get("category");
         const name = formData.get("name");
         const description = formData.get("description");
@@ -125,21 +133,21 @@ export function Form({ categories, sizes }: Props) {
                     price: parseFloat(sizePrices[size.id])
                 }));
                 data.append("custom_prices", JSON.stringify(customPrices)); // Backend faz parse da string JSON
-                
-               
+
+
             }
             // Quando não usa preços individuais, não enviar has_custom_prices
             // Backend assume false por padrão (ou pode enviar explicitamente "false")
-          
+
         } else {
             // Produto sem tamanhos - precisa de preço fixo
             if (price) {
                 data.append("price", price);
-                
+
             }
         }
 
- 
+
         const formDataEntries: string[] = [];
         for (const [key, value] of data.entries()) {
             if (key === "file") {
@@ -150,26 +158,29 @@ export function Form({ categories, sizes }: Props) {
                 formDataEntries.push(`${key}: ${value}`);
             }
         }
-        
+
 
         const token = getCookieClient();
+        setIsSubmitting(true);
 
         try {
-           
             await api.post("/product", data, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
-            
-            
 
             toast.success("Produto cadastrado com sucesso!");
-            router.push("/dashboard");
-            router.refresh();
+            resetForm(form);
         } catch (error: unknown) {
-            
-            
+            const axiosError = error as { response?: { data?: { error?: string; message?: string } } };
+            const errorMessage =
+                axiosError.response?.data?.error ||
+                axiosError.response?.data?.message ||
+                "Falha ao cadastrar produto!";
+            toast.error(errorMessage);
+        } finally {
+            setIsSubmitting(false);
         }
     }
 
@@ -252,7 +263,7 @@ export function Form({ categories, sizes }: Props) {
                             <div className={styles.warning}>
                                 <p>⚠️ Nenhum tamanho cadastrado. Cadastre os tamanhos primeiro em <strong>/dashboard/size</strong></p>
                                 <p style={{ marginTop: '8px', fontSize: '0.875rem', color: '#999' }}>
-                                    Ou use os preços padrão da categoria "{selectedCategory?.name}"
+                                    Ou use os preços padrão da categoria &quot;{selectedCategory?.name}&quot;
                                 </p>
                             </div>
                         ) : (
@@ -303,7 +314,7 @@ export function Form({ categories, sizes }: Props) {
                                     </div>
                                 ) : (
                                     <div className={styles.infoBox}>
-                                        <p>✓ Este produto usará os preços definidos na categoria "{selectedCategory?.name}"</p>
+                                        <p>✓ Este produto usará os preços definidos na categoria &quot;{selectedCategory?.name}&quot;</p>
                                         {selectedCategory?.size_prices && selectedCategory.size_prices.length > 0 && (
                                             <div style={{ marginTop: '12px', fontSize: '0.875rem' }}>
                                                 <p style={{ marginBottom: '8px', fontWeight: 'bold' }}>Preços da categoria:</p>
@@ -342,7 +353,10 @@ export function Form({ categories, sizes }: Props) {
                     </div>
                 )}
 
-                <Button name="Cadastrar produto" />
+                <Button
+                    name={isSubmitting ? "Cadastrando..." : "Cadastrar produto"}
+                    disabled={isSubmitting}
+                />
             </form>
         </main>
     );
