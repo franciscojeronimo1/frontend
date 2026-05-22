@@ -1,13 +1,15 @@
 'use client'
 import { X, Printer } from 'lucide-react';
 import styles from './styles.module.scss';
-import {use} from 'react'
+import { use, useState } from 'react'
 import { OrderContext } from '@/providers/order';
 import { calculateTotalOrder } from '@/lib/helper';
+import { ConfirmModal } from '@/app/dashboard/components/confirm-modal';
 
 
 export function Modalorder() {
     const { onRequestClose, order, finishOrder} = use(OrderContext)
+    const [showFinishConfirm, setShowFinishConfirm] = useState(false)
     
     function getPaymentMethodLabel(method: string): string {
         const labels: Record<string, string> = {
@@ -246,12 +248,28 @@ export function Modalorder() {
                         <Printer size={20} />
                         Imprimir
                     </button>
-                    <button className={styles.buttonOrder} onClick={handleFinishOrder}>
+                    <button
+                        type="button"
+                        className={styles.buttonOrder}
+                        onClick={() => setShowFinishConfirm(true)}
+                    >
                         Concluir pedido
                     </button>
                 </div>
             </article>
         </section>
+
+        <ConfirmModal
+            isOpen={showFinishConfirm}
+            onClose={() => setShowFinishConfirm(false)}
+            onConfirm={handleFinishOrder}
+            title="Deseja concluir o pedido?"
+            message=""
+            confirmText="Sim"
+            cancelText="Não"
+            confirmButtonColor="primary"
+            compact
+        />
         </dialog>
     )
 }

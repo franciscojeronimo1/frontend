@@ -8,7 +8,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
+    z-index: 10001;
     padding: 1rem;
     animation: fadeIn 0.2s ease-in-out;
 }
@@ -19,6 +19,26 @@
     }
     to {
         opacity: 1;
+    }
+}
+
+.modalCompact {
+    max-width: 340px;
+
+    .content {
+        padding: 1.5rem;
+        padding-top: 2rem;
+        text-align: center;
+    }
+
+    .title {
+        font-size: 1.125rem;
+        margin-bottom: 0;
+    }
+
+    .actions {
+        justify-content: center;
+        padding: 1rem 1.5rem 1.5rem;
     }
 }
 

@@ -11,6 +11,7 @@ interface ConfirmModalProps {
     confirmText?: string;
     cancelText?: string;
     confirmButtonColor?: "danger" | "primary";
+    compact?: boolean;
 }
 
 export function ConfirmModal({
@@ -21,7 +22,8 @@ export function ConfirmModal({
     message,
     confirmText = "Confirmar",
     cancelText = "Cancelar",
-    confirmButtonColor = "danger"
+    confirmButtonColor = "danger",
+    compact = false,
 }: ConfirmModalProps) {
     if (!isOpen) return null;
 
@@ -38,7 +40,7 @@ export function ConfirmModal({
 
     return (
         <div className={styles.overlay} onClick={handleBackdropClick}>
-            <div className={styles.modal}>
+            <div className={`${styles.modal} ${compact ? styles.modalCompact : ""}`}>
                 <button
                     type="button"
                     className={styles.closeButton}
@@ -49,8 +51,8 @@ export function ConfirmModal({
                 </button>
 
                 <div className={styles.content}>
-                    <h2 className={styles.title}>{title}</h2>
-                    <p className={styles.message}>{message}</p>
+                    {title ? <h2 className={styles.title}>{title}</h2> : null}
+                    {message ? <p className={styles.message}>{message}</p> : null}
                 </div>
 
                 <div className={styles.actions}>
