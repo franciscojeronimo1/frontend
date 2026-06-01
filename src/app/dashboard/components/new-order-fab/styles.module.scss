@@ -1,0 +1,39 @@
+.fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--green-900);
+    color: var(--dark-900);
+    padding: 14px 20px;
+    border-radius: 50px;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 4px 20px rgba(63, 255, 163, 0.35);
+    transition: transform 0.2s, opacity 0.2s;
+
+    &:hover {
+        opacity: 0.95;
+        transform: scale(1.03);
+    }
+}
+
+.fabLabel {
+    font-size: 0.95rem;
+}
+
+@media (max-width: 480px) {
+    .fab {
+        bottom: 16px;
+        right: 16px;
+        padding: 14px;
+        border-radius: 50%;
+    }
+
+    .fabLabel {
+        display: none;
+    }
+}

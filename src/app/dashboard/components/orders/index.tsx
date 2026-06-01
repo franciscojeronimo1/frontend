@@ -1,11 +1,12 @@
 "use client";
 import styles from './styles.module.scss';
-import { RefreshCw, CheckSquare, Square } from 'lucide-react';
+import { RefreshCw, CheckSquare, Square, Plus } from 'lucide-react';
 import { OrderProps } from '@/lib/order.type';
 import { Modalorder } from '../modal';
 import { use, useState } from 'react';
 import { OrderContext } from '@/providers/order';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { toast } from 'sonner';
 interface Props{
     orders: OrderProps[];
@@ -70,6 +71,10 @@ export function Orders({orders}:Props) {
             <section className={styles.containerHeader}>
                 <h1>Últimos pedidos</h1>
                 <div className={styles.headerActions}>
+                    <Link href="/dashboard/order" className={styles.newOrderButton}>
+                        <Plus size={20} />
+                        Novo pedido
+                    </Link>
                     {orders.length > 0 && (
                         <>
                             <button 

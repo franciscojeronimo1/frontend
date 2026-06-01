@@ -32,6 +32,25 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    flex-wrap: wrap;
+}
+
+.newOrderButton {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--green-900);
+    color: var(--dark-900);
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: opacity 0.2s;
+
+    &:hover {
+        opacity: 0.9;
+    }
 }
 
 .selectAllButton {

@@ -1,0 +1,134 @@
+.checklist {
+    max-width: 720px;
+    margin: 16px auto 0;
+    padding: 20px 16px;
+    background: var(--dark-900);
+    border: 1px solid var(--green-900);
+    border-radius: 12px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 20px;
+
+    h2 {
+        color: var(--white);
+        font-size: 1.25rem;
+        margin: 0 0 6px;
+    }
+
+    p {
+        color: var(--gray-100);
+        font-size: 0.9rem;
+        margin: 0;
+    }
+}
+
+.progress {
+    color: var(--green-900);
+    font-weight: 700;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.steps li {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.stepDone {
+    opacity: 0.65;
+}
+
+.iconDone {
+    color: var(--green-900);
+    flex-shrink: 0;
+}
+
+.iconPending {
+    color: var(--gray-100);
+    flex-shrink: 0;
+}
+
+.stepContent {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    strong {
+        color: var(--white);
+        font-size: 1rem;
+    }
+
+    span {
+        color: var(--gray-100);
+        font-size: 0.85rem;
+    }
+}
+
+.stepLink {
+    color: var(--green-900);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    margin-top: 4px;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.stepLocked {
+    color: var(--gray-100);
+    font-size: 0.8rem;
+    font-style: italic;
+    margin-top: 4px;
+}
+
+.stepOptional {
+    opacity: 0.9;
+    padding-top: 8px;
+    margin-top: 4px;
+    border-top: 1px dashed var(--dark-700);
+}
+
+.optionalBadge {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--gray-100);
+    background: var(--dark-700);
+    border-radius: 4px;
+    vertical-align: middle;
+}
+
+.dismissBtn {
+    margin-top: 20px;
+    background: transparent;
+    border: 0;
+    color: var(--gray-100);
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+
+    &:hover {
+        color: var(--white);
+    }
+}
